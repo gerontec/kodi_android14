@@ -1,75 +1,51 @@
 #EXTM3U
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",Das Erste HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5100,5101,1170,1176,2171,2172,5102,5103,5104,5105,5107
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",ZDF HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=450&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,6100,6110,6120,6121,6123,6130,6131,6170,6171,6172
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",ZDFinfo HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=450&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,6700,6710,6720,6721,6723,6730,6731,6770,6771,6772
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",ZDFneo HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=474&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,104,541,540,542,543,544,546,547,6371,6372
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",MDR Sachsen HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5320,5321,34,2870,2876,5322,5323,5324,5325,5327
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",WDR HD Köln
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5500,5501,33,2370,5502,5503,5504,5505,5507
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",arte HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=418&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,105,6661,6660,6662,6663,6664,6665,6666,6667,6668,6669
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",NDR FS NDS HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5220,5221,35,1770,2676,5222,5223,5224,5225,5227
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",PHOENIX HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=474&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,106,581,582,583,584,586,588,2171
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",3sat HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=450&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,6500,6510,6520,6521,6523,6530,6531,6570
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",BR Süd HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5200,5201,1076,1570,2171,5202,5203,5204,5205,5207,5209
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",rbb Berlin HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=450&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5310,5311,677,2171,2176,5312,5313,5314,5315,5317
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",KiKA HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=474&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,102,431,430,432,433,434,436,437
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",tagesschau24 HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=394&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,102,1221,1222,1223,1224,1226,1227,1228,2171
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",hr-fernsehen HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=418&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,106,6551,2171,6550,6552,6553,6554,6556,6557,6558
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",ONE HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=538&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,103,1721,1720,1722,1723,1724,1726,1727,1728,2171
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",SWR RP HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,5130,5131,32,1371,2476,5132,5133,5134,5135,5137
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",ARD alpha HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=394&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,101,1211,1210,1212,1213,1214,1216,1217,1218,2171
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",DF1 HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=498&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,102,6771,6772,6773
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",SR Fernsehen HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=394&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,104,1271,1270,1272,1273,1274,1276,1277,1278,2171
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",münchen.tv HD
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7650,7652,7653,7654,7657,7659
 #EXTINF:0 group-title="🇩🇪 Deutschland HD",.....
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=474&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,107,1041,1042,1046
 #EXTINF:0 group-title="🇦🇹 Österreich",ORF 1
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7660,7662,7663,7668
 #EXTINF:0 group-title="🇦🇹 Österreich",ORF 2
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7670,7672,7673,7678
 #EXTINF:-1 group-title="🇷🇺 Russland",Первый канал HD
 https://edge1.1internet.tv/dash-live2/streams/1tv-dvr/1tvdash.mpd
@@ -84,46 +60,32 @@ https://live-fi.tvkaista.net/mtv3/live.m3u8
 #EXTINF:-1 group-title="🇳🇿 New Zealand",Bravo NZ
 https://mediapackage-bravo-plus-1-source.fullscreen.nz/index.m3u8
 #EXTINF:0 group-title="🌍 International",Al Jazeera International (eng)
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,101,2261,2262
 #EXTINF:0 group-title="🌍 International",BBC News (eng)
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,110,401,402
 #EXTINF:0 group-title="🌍 International",CGTN
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,113,6451,6452
 #EXTINF:0 group-title="🌍 International",CNBC (eng)
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=610&bw=8&msys=dvbc&mtype=64qam&sr=6900&specinv=1&pids=0,16,17,18,20,37,1651,1652
 #EXTINF:0 group-title="🌍 International",CNN International (eng)
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,107,2251,2252
 #EXTINF:0 group-title="🌍 International",euronews
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,106,2601,2602
 #EXTINF:0 group-title="Sonstige",ANIXE+
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=458&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4200,4202,4203,4209
 #EXTINF:0 group-title="Sonstige",Spirit TV
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,101,871,872
 #EXTINF:0 group-title="Sonstige",DIE NEUE ZEIT TV
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=442&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,119,961,962
 #EXTINF:0 group-title="Sonstige",DOKUSAT
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,105,2931,2932,2934,2936
 #EXTINF:0 group-title="Sonstige",Hope TV
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,109,1241,1242
 #EXTINF:0 group-title="Sonstige",K-TV
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,114,6481,6482,6486
 #EXTINF:0 group-title="Sonstige",DMF
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,112,6501,6502,6504,6506
 #EXTINF:0 group-title="Sonstige",SCHLAGER DELUXE
-#EXTVLCOPT:network-caching=1000
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,104,941,942
 #EXTINF:-1 tvg-id="CarsTV.us@SD" tvg-logo="https://i.imgur.com/JLSHiTp.png" group-title="🌍 International",Cars.TV
 https://dvrfl04.tulix.tv/teleup-carstv/mpegts
@@ -237,321 +199,215 @@ https://dvrfl04.tulix.tv/teleup-laff/mpegts
 http://190.104.15.135/0.ts
 #EXTINF:-1 tvg-id="" tvg-logo="" group-title="🌍 International",云南 Ⅰ 文山综合台 (1080p) [Not 24/7]
 http://tvdrs.wsrtv.com.cn:8100/channellive/ch1.flv
-#EXTINF:0 group-title="📻 Radio" radio="true",ERF Plus
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",ERF Plus
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,301,6372
-#EXTINF:0 group-title="📻 Radio" radio="true",JAM FM
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",JAM FM
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,312,6332
-#EXTINF:0 group-title="📻 Radio" radio="true",MEGA Radio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MEGA Radio
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7120,7123
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Horeb
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Horeb
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,310,6362
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Paloma
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Paloma
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,314,6322
-#EXTINF:0 group-title="📻 Radio" radio="true",RTL Radio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",RTL Radio
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,315,6312
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Sunshine Live
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Sunshine Live
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,311,6382
-#EXTINF:0 group-title="📻 Radio" radio="true",Schlager Radio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Schlager Radio
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7100,7103
-#EXTINF:0 group-title="📻 Radio" radio="true",80s80s
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",80s80s
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,316,6302
-#EXTINF:0 group-title="📻 Radio" radio="true",ROCK ANTENNE
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",ROCK ANTENNE
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,324,3372
-#EXTINF:0 group-title="📻 Radio" radio="true",Beats Radio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Beats Radio
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,317,3382
-#EXTINF:0 group-title="📻 Radio" radio="true",Schwarzwaldradio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Schwarzwaldradio
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,327,3312
-#EXTINF:0 group-title="📻 Radio" radio="true",90s90s
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",90s90s
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,324,2772
-#EXTINF:0 group-title="📻 Radio" radio="true",bigFM
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",bigFM
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,325,2782
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Regenbogen
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Regenbogen
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,325,2842
-#EXTINF:0 group-title="📻 Radio" radio="true",ROCK FM
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",ROCK FM
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,326,2852
-#EXTINF:0 group-title="📻 Radio" radio="true",RPR1.
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",RPR1.
 rtsp://192.168.178.1:554/?avm=1&freq=562&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,328,2862
-#EXTINF:0 group-title="📻 Radio" radio="true",Oldie Antenne
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Oldie Antenne
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,326,2792
-#EXTINF:0 group-title="📻 Radio" radio="true",RADIO BOLLERWAGEN
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",RADIO BOLLERWAGEN
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,327,2872
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio ENERGY
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio ENERGY
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,329,2882
-#EXTINF:0 group-title="📻 Radio" radio="true",NOSTALGIE
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NOSTALGIE
 rtsp://192.168.178.1:554/?avm=1&freq=546&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,328,2652
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR 2 Ostwestfalen/Lippe
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR 2 Ostwestfalen/Lippe
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,303,3332
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR Kultur
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR Kultur
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3430,3431,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",AntenneSaar
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",AntenneSaar
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,302,3322
-#EXTINF:0 group-title="📻 Radio" radio="true",UNSERDING
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",UNSERDING
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,301,3302
-#EXTINF:0 group-title="📻 Radio" radio="true",Gong 96,3 in Ingolstadt
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Gong 96,3 in Ingolstadt
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7760,7763
-#EXTINF:0 group-title="📻 Radio" radio="true",089 Kult
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",089 Kult
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7750,7753
-#EXTINF:0 group-title="📻 Radio" radio="true",ANTENNE BAYERN
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",ANTENNE BAYERN
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7600,7603
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Charivari München
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Charivari München
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7680,7683
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Gong 96,3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Gong 96,3
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7690,7693
-#EXTINF:0 group-title="📻 Radio" radio="true",radio horeb / Feierwerk / Lora
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",radio horeb / Feierwerk / Lora
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7740,7743
-#EXTINF:0 group-title="📻 Radio" radio="true",Arabella München
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Arabella München
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7700,7703
-#EXTINF:0 group-title="📻 Radio" radio="true",Energy München
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Energy München
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7710,7713
-#EXTINF:0 group-title="📻 Radio" radio="true",FM4
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",FM4
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7610,7613
-#EXTINF:0 group-title="📻 Radio" radio="true",Ö2 - Radio Oberösterreich
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Ö2 - Radio Oberösterreich
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7720,7723
-#EXTINF:0 group-title="📻 Radio" radio="true",Ö2 - Radio Salzburg
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Ö2 - Radio Salzburg
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7730,7733
-#EXTINF:0 group-title="📻 Radio" radio="true",Österreich 1
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Österreich 1
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7620,7623
-#EXTINF:0 group-title="📻 Radio" radio="true",Osterreich 3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Osterreich 3
 rtsp://192.168.178.1:554/?avm=1&freq=466&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7630,7633
-#EXTINF:0 group-title="📻 Radio" radio="true",Arabella Bayern
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Arabella Bayern
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7130,7133
-#EXTINF:0 group-title="📻 Radio" radio="true",RADIO BOB!
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",RADIO BOB!
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7110,7113
-#EXTINF:0 group-title="📻 Radio" radio="true",Radio Teddy
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Radio Teddy
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7140,7143
-#EXTINF:0 group-title="📻 Radio" radio="true",Klassik Radio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Klassik Radio
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7150,7153
-#EXTINF:0 group-title="📻 Radio" radio="true",Rock Antenne Bayern
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Rock Antenne Bayern
 rtsp://192.168.178.1:554/?avm=1&freq=410&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,7160,7163
-#EXTINF:0 group-title="📻 Radio" radio="true",1LIVE
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",1LIVE
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3810,3811,3816
-#EXTINF:0 group-title="📻 Radio" radio="true",1LIVE diGGi
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",1LIVE diGGi
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3870,3871,3876
-#EXTINF:0 group-title="📻 Radio" radio="true",COSMO
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",COSMO
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3860,3861,3866
-#EXTINF:0 group-title="📻 Radio" radio="true",Die Maus
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Die Maus
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3880,3881,3886
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR 2
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR 2
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3820,3821,3826
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR 3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR 3
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3830,3831,3836
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR 4
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR 4
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3840,3841,3846
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR 5
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR 5
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3850,3851,3856
-#EXTINF:0 group-title="📻 Radio" radio="true",WDR Event
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",WDR Event
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3890,3891,3896
-#EXTINF:0 group-title="📻 Radio" radio="true",DASDING
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",DASDING
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3760,3761,3766
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR Aktuell
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR Aktuell
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3770,3771,7376
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR1 BW
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR1 BW
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3700,3701,3706
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR1 RP
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR1 RP
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3710,3711,3716
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR Kultur
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR Kultur
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3720,3721,3726
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR3
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3730,3731,3736
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR4 BW
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR4 BW
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3740,3741,3746
-#EXTINF:0 group-title="📻 Radio" radio="true",SWR4 - Rheinhessen
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SWR4 - Rheinhessen
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3750,3751,3756
-#EXTINF:0 group-title="📻 Radio" radio="true",hr1
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",hr1
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3950,3951,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",hr2
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",hr2
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3960,3961,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",hr3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",hr3
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3970,3971,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",hr4
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",hr4
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3980,3981,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",hr INFO
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",hr INFO
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4000,4001,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",YOU FM
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",YOU FM
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3990,3991,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",BR24
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BR24
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3140,3141,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",BR24live
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BR24live
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3150,3151,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bayern 1
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bayern 1
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3100,3101,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bayern 2
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bayern 2
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3110,3111,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",BAYERN 3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BAYERN 3
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3120,3121,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",BR-KLASSIK
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BR-KLASSIK
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3130,3131,2074,2177,3132
-#EXTINF:0 group-title="📻 Radio" radio="true",BR Schlager
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BR Schlager
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3160,3161,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",BR-Heimat
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",BR-Heimat
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3180,3181,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",PULS
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",PULS
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3170,3171,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR AKTUELL
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR AKTUELL
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4100,4101,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR JUMP
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR JUMP
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4080,4081,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR KLASSIK
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR KLASSIK
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4110,4111,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR KULTUR
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR KULTUR
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4070,4071,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR SACHSEN DD
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR SACHSEN DD
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4040,4041,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR S-ANHALT MD
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR S-ANHALT MD
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4050,4051,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR SPUTNIK
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR SPUTNIK
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4090,4091,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",MDR THÜR Mitte-W
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",MDR THÜR Mitte-W
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4060,4061,2074,2179
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR 1 Nieders. HAN
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR 1 Nieders. HAN
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3490,3491,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR 1 Radio MV SN
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR 1 Radio MV SN
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3480,3481,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR 2 NDS
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR 2 NDS
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3420,3421,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR 90,3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR 90,3
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3460,3461,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR Blue
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR Blue
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3510,3511,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR Info NDS
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR Info NDS
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3440,3441,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR Info Spezial
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR Info Spezial
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3500,3501,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR Schlager
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR Schlager
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3520,3521,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",NDR1 Welle Nord KI
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",NDR1 Welle Nord KI
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3470,3471,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",N-JOY
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",N-JOY
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3450,3451,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bremen Eins
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bremen Eins
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3560,3561,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bremen Next
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bremen Next
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3590,3591,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bremen Vier
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bremen Vier
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3580,3581,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Bremen Zwei
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Bremen Zwei
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3570,3571,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",Antenne Brbg.
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Antenne Brbg.
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4160,4161,2179,4166
-#EXTINF:0 group-title="📻 Radio" radio="true",Fritz
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",Fritz
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4190,4191,2179,4196
-#EXTINF:0 group-title="📻 Radio" radio="true",rbb24 Inforadio
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",rbb24 Inforadio
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4140,4141,2179,4146
-#EXTINF:0 group-title="📻 Radio" radio="true",radio3
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",radio3
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4150,4151,2179,4156
-#EXTINF:0 group-title="📻 Radio" radio="true",rbb 88.8
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",rbb 88.8
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4170,4171,2179,4176
-#EXTINF:0 group-title="📻 Radio" radio="true",radioeins
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",radioeins
 rtsp://192.168.178.1:554/?avm=1&freq=402&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,4180,4181,2179,4186
-#EXTINF:0 group-title="📻 Radio" radio="true",SR 1 Europawelle
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SR 1 Europawelle
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3620,3621,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",SR kultur
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SR kultur
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3630,3631,2074,2177
-#EXTINF:0 group-title="📻 Radio" radio="true",SR 3 Saarlandwelle
-#EXTVLCOPT:network-caching=1000
+#EXTINF:0 group-title="📻 Radio",SR 3 Saarlandwelle
 rtsp://192.168.178.1:554/?avm=1&freq=386&bw=8&msys=dvbc&mtype=256qam&sr=6900&specinv=1&pids=0,16,17,18,20,3640,3641,2074,2177

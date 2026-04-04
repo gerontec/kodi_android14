@@ -12,15 +12,15 @@
         <canwritedatabases>true</canwritedatabases>
         <hassources>true</hassources>
         <canwritesources>true</canwritesources>
-        <lockaddonmanager>true</lockaddonmanager>
-        <locksettings>3</locksettings>
+        <lockaddonmanager>false</lockaddonmanager>
+        <locksettings>0</locksettings>
         <lockfiles>false</lockfiles>
         <lockmusic>false</lockmusic>
         <lockvideo>false</lockvideo>
         <lockpictures>false</lockpictures>
         <lockprograms>false</lockprograms>
         <lockgames>false</lockgames>
-        <lockmode>1</lockmode>
+        <lockmode>0</lockmode>
         <lockcode>1234</lockcode>
         <lastdate></lastdate>
     </profile>
