@@ -27,10 +27,16 @@ KODI_PASS = "654321"
 KODI_PORT = 8080
 
 FILES = {
-    "playlist":  "tvsd_filtered.m3u",
-    "pvr":       "pvr-instance-settings.xml",
-    "profiles":  "profiles.xml",
+    "playlist":    "tvsd_filtered.m3u",
+    "pvr":         "pvr-instance-settings.xml",
+    "profiles":    "profiles.xml",
+    "favourites":  "favourites.xml",
+    "launcher":    "kodi_launcher.apk",
 }
+
+SAT_PACKAGE   = "com.mediatek.tv.oneworld.tvcenter"
+SAT_ACTIVITY  = ".nav.TurnkeyUiMainActivity"
+SAT_INTENT    = "com.mediatek.tv.action.TUNER_TYPE"
 
 
 def run(cmd, check=True, capture=True):
@@ -160,6 +166,33 @@ def push_profiles():
     print("  Masterlock-PIN 1234 gesetzt (Einstellungen + Addon-Manager gesperrt).")
 
 
+def install_launcher():
+    step("Kodi-Launcher installieren (Boot + HOME)")
+    src = os.path.join(SCRIPT_DIR, FILES["launcher"])
+    run(f"adb -s {ADB_TARGET} install -r {src}", check=False)
+    result = run(f"adb -s {ADB_TARGET} shell cmd package set-home-activity "
+                 "de.gerontec.kodilauncher/.LauncherActivity", check=False)
+    if "Success" in result:
+        print("  Kodi-Launcher als bevorzugte HOME-Activity gesetzt.")
+    else:
+        print("  Launcher installiert (HOME-Prio manuell setzen falls nötig).")
+
+
+def push_sat_shortcut():
+    step("SAT-Switch (Astra DVB-S) in Kodi-Favoriten")
+    fav_file = f"{KODI_DATA}/userdata/favourites.xml"
+    src = os.path.join(SCRIPT_DIR, FILES["favourites"])
+    with open(src, "rb") as f:
+        content = f.read()
+    proc = subprocess.Popen(
+        ["adb", "-s", ADB_TARGET, "shell", f"cat > '{fav_file}'"],
+        stdin=subprocess.PIPE
+    )
+    proc.communicate(input=content)
+    print(f"  Favorit 'SAT TV (Astra)' → {fav_file}")
+    print(f"  In Kodi: Favoriten → SAT TV (Astra) → startet Sat-Tuner")
+
+
 def restart_kodi():
     step("Kodi neu starten")
     # Try graceful quit via JSON-RPC if web server is up
@@ -205,11 +238,13 @@ def main():
 """)
     check_files()
     connect_adb()
+    install_launcher()
     start_kodi()
     check_kodi_dirs()
     push_playlist()
     push_pvr_settings()
     push_profiles()
+    push_sat_shortcut()
     restart_kodi()
     verify()
 
