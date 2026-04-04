@@ -1,4 +1,4 @@
 <favourites>
     <favourite name="SAT TV (Astra)">StartAndroidActivity(com.mediatek.tv.oneworld.tvcenter,,,)</favourite>
-    <favourite name="Bee Gees Mix (YouTube)">PlayMedia(plugin://plugin.video.youtube/play/?playlist_id=RD0TsLRcZcSRQ)</favourite>
+
 </favourites>
