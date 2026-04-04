@@ -119,6 +119,60 @@ Kodi settings and the addon manager are PIN-protected to prevent guest changes.
 
 ---
 
+## Boot Behaviour — Kodi as Primary App
+
+### How it works
+
+`kodi_launcher.apk` is a minimal Android launcher that declares the `HOME` category in its manifest. It is installed on the TV and registered as the preferred HOME activity:
+
+```bash
+adb connect 192.168.178.43:5555
+adb install kodi_launcher.apk
+adb shell cmd package set-home-activity de.gerontec.kodilauncher/.LauncherActivity
+```
+
+When the TV **powers on**, Android resolves the HOME activity using the preferred-activity registry. Our launcher is selected, immediately starts Kodi, and exits — so Kodi is the first app the user sees after boot.
+
+> **Note:** The **Home button** on the remote still navigates to the Google TV Launcher.  
+> This is a Google TV restriction that cannot be bypassed without root access.  
+> The Google TV home screen remains accessible via the Home button (lowest priority in practice — Kodi is primary at boot).
+
+The `install.py` script handles the APK install and home-activity registration automatically.
+
+---
+
+## Switching to SAT TV (Astra DVB-S) from within Kodi
+
+The TV has a built-in DVB-S satellite tuner (Astra 19.2°E via the satellite dish input).  
+A shortcut to switch directly to the satellite tuner is available inside Kodi under **Favourites**.
+
+### How to switch
+
+1. In Kodi, open **Favourites** (star icon or via the menu)
+2. Select **"SAT TV (Astra)"**
+3. The MTK TV Center opens and switches to the DVB-S satellite input
+
+### How to return to Kodi
+
+- Press **Back** repeatedly until the Android home screen appears, then relaunch Kodi
+- Or use the app switcher on the remote to switch back to Kodi directly
+
+### Technical details
+
+The favourite calls Android's `StartAndroidActivity` built-in:
+
+```
+StartAndroidActivity(com.mediatek.tv.oneworld.tvcenter,,,)
+```
+
+To switch to satellite from the command line:
+
+```bash
+adb shell am start -n com.mediatek.tv.oneworld.tvcenter/.nav.TurnkeyUiMainActivity
+```
+
+---
+
 ## Kodi Web Interface
 
 The Kodi web server must be enabled manually after first install:
