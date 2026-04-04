@@ -9,6 +9,11 @@
             <path pathversion="1">plugin://plugin.video.youtube/play/?playlist_id=RD0TsLRcZcSRQ</path>
             <allowsharing>true</allowsharing>
         </source>
+        <source>
+            <name>Music Videos</name>
+            <path pathversion="1">/sdcard/Download/musicvideos/</path>
+            <allowsharing>true</allowsharing>
+        </source>
     </video>
     <music>
         <default pathversion="1"></default>
