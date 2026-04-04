@@ -1,4 +1,5 @@
 <favourites>
     <favourite name="SAT TV (Astra)">StartAndroidActivity(com.mediatek.tv.oneworld.tvcenter,,,)</favourite>
+    <favourite name="Telegram">StartAndroidActivity(org.telegram.messenger.web,,,)</favourite>
 
 </favourites>
