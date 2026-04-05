@@ -30,8 +30,15 @@
 
 /* ── display control via Android input service ───────────────────────────── */
 
-int screen_off(void)   { int r = system("input keyevent KEYCODE_SLEEP");   printf("Screen: OFF\n");  fflush(stdout); return r; }
-int screen_on(void)    { int r = system("input keyevent KEYCODE_WAKEUP");  printf("Screen: ON\n");   fflush(stdout); return r; }
+int screen_off(void) {
+    /* Brightness auf 0 statt KEYCODE_SLEEP — TV bleibt am Netz */
+    int r = system("settings put system screen_brightness 0");
+    printf("Screen: OFF\n"); fflush(stdout); return r;
+}
+int screen_on(void) {
+    int r = system("settings put system screen_brightness 128");
+    printf("Screen: ON\n");  fflush(stdout); return r;
+}
 int screen_saver(void) { int r = system("service call dreams 1 2>/dev/null"); printf("Screensaver\n"); fflush(stdout); return r; }
 
 /* ── source / app switching ─────────────────────────────────────────────── */
@@ -55,18 +62,12 @@ int launch_source(int src) {
 }
 
 int screen_state(void) {
-    FILE *fp = popen("dumpsys power 2>/dev/null", "r");
-    char buf[256];
-    int st = -1;
+    FILE *fp = popen("settings get system screen_brightness 2>/dev/null", "r");
+    char buf[32];
     if (!fp) return -1;
-    while (fgets(buf, sizeof(buf), fp)) {
-        if (strstr(buf, "mWakefulness=")) {
-            st = !!strstr(buf, "Awake"); break;
-        }
-        if (strstr(buf, "Display Power")) {
-            st = !!strstr(buf, "state=ON"); break;
-        }
-    }
+    int st = -1;
+    if (fgets(buf, sizeof(buf), fp))
+        st = (atoi(buf) > 0) ? 1 : 0;
     pclose(fp);
     return st;
 }
