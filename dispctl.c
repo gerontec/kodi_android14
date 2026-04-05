@@ -34,6 +34,25 @@ static void screen_off(void)   { system("input keyevent KEYCODE_SLEEP");      pr
 static void screen_on(void)    { system("input keyevent KEYCODE_WAKEUP");     printf("Screen: ON\n");   fflush(stdout); }
 static void screen_saver(void) { system("service call dreams 1 2>/dev/null"); printf("Screensaver\n"); fflush(stdout); }
 
+/* ── source / app switching ─────────────────────────────────────────────── */
+/* 1=kodi (default), 2=astra live-tv, 3=google home                         */
+
+static void launch_source(int src) {
+    char cmd[256];
+    const char *pkg = NULL;
+    switch (src) {
+        case 1: pkg = "de.gerontec.kodilauncher/.LauncherActivity";             break;
+        case 2: pkg = "com.cltv.hybrid/com.iwedia.cltv.MainActivity";          break;
+        case 3: pkg = "com.google.android.apps.tv.launcherx/.home.HomeActivity"; break;
+        default:
+            fprintf(stderr, "Unbekannte Quelle: %d (1=Kodi 2=Astra 3=Google)\n", src);
+            return;
+    }
+    snprintf(cmd, sizeof(cmd), "am start -n %s", pkg);
+    system(cmd);
+    printf("Source: %d (%s)\n", src, pkg); fflush(stdout);
+}
+
 static int screen_state(void) {
     FILE *fp = popen("dumpsys power 2>/dev/null", "r");
     char buf[256];
@@ -202,6 +221,9 @@ reconnect:
                     if (st == 1) { screen_off(); mqtt_pub(mfd, state_t, "OFF"); }
                     else         { screen_on();  mqtt_pub(mfd, state_t, "ON"); }
                 }
+                else if (!strncasecmp(payload, "SOURCE:", 7)) {
+                    launch_source(atoi(payload + 7));
+                }
             }
         }
     }
@@ -223,9 +245,11 @@ int main(int argc, char *argv[]) {
     if (!strcmp(cmd, "--status")) { printf("%s\n", screen_state()==1?"ON":"OFF"); return 0; }
     if (!strcmp(cmd, "--saver"))  { screen_saver(); return 0; }
     if (!strcmp(cmd, "--mqtt"))   { run_mqtt(argc>2?argv[2]:"192.168.178.218", argc>3?argv[3]:"tv/display"); return 0; }
+    if (!strcmp(cmd, "--source") && argc > 2) { launch_source(atoi(argv[2])); return 0; }
     if      (!strcmp(cmd, "--off"))    screen_off();
     else if (!strcmp(cmd, "--on"))     screen_on();
     else if (!strcmp(cmd, "--toggle")) { int s=screen_state(); if(s==1) screen_off(); else screen_on(); }
-    else fprintf(stderr, "Unbekannt: %s\n", cmd);
+    else { fprintf(stderr, "Verwendung: dispctl --on|--off|--toggle|--saver|--status|--source 1-3\n"
+                           "            dispctl --mqtt [broker] [prefix]\n"); }
     return 0;
 }

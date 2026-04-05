@@ -40,7 +40,8 @@ adb shell "/data/local/tmp/dispctl --mqtt 192.168.178.218 tv/display &"
 | Topic | Richtung | Payload |
 |---|---|---|
 | `tv/display/set` | Subscribe | `ON` / `OFF` / `TOGGLE` / `SAVER` / `STATUS` |
-| `tv/display/state` | Publish | `ON` / `OFF` |
+| `tv/display/set` | Subscribe | `SOURCE:1` (Kodi) / `SOURCE:2` (Astra) / `SOURCE:3` (Google) |
+| `tv/display/state` | Publish | `ON` / `OFF` — auch alle 5 Minuten automatisch |
 
 Status wird automatisch alle 5 Minuten gepublished.
 
@@ -51,6 +52,11 @@ mosquitto_pub -h 192.168.178.218 -t tv/display/set -m OFF
 mosquitto_pub -h 192.168.178.218 -t tv/display/set -m ON
 mosquitto_pub -h 192.168.178.218 -t tv/display/set -m STATUS
 mosquitto_sub -h 192.168.178.218 -t tv/display/state
+
+# Quelle wechseln
+mosquitto_pub -h 192.168.178.218 -t tv/display/set -m SOURCE:1  # Kodi
+mosquitto_pub -h 192.168.178.218 -t tv/display/set -m SOURCE:2  # Astra Live-TV
+mosquitto_pub -h 192.168.178.218 -t tv/display/set -m SOURCE:3  # Google Startbildschirm
 ```
 
 ## Autostart via Termux:Boot
