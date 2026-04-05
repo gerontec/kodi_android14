@@ -30,30 +30,31 @@
 
 /* ── display control via Android input service ───────────────────────────── */
 
-static void screen_off(void)   { system("input keyevent KEYCODE_SLEEP");      printf("Screen: OFF\n");  fflush(stdout); }
-static void screen_on(void)    { system("input keyevent KEYCODE_WAKEUP");     printf("Screen: ON\n");   fflush(stdout); }
-static void screen_saver(void) { system("service call dreams 1 2>/dev/null"); printf("Screensaver\n"); fflush(stdout); }
+int screen_off(void)   { int r = system("input keyevent KEYCODE_SLEEP");   printf("Screen: OFF\n");  fflush(stdout); return r; }
+int screen_on(void)    { int r = system("input keyevent KEYCODE_WAKEUP");  printf("Screen: ON\n");   fflush(stdout); return r; }
+int screen_saver(void) { int r = system("service call dreams 1 2>/dev/null"); printf("Screensaver\n"); fflush(stdout); return r; }
 
 /* ── source / app switching ─────────────────────────────────────────────── */
 /* 1=kodi (default), 2=astra live-tv, 3=google home                         */
 
-static void launch_source(int src) {
+int launch_source(int src) {
     char cmd[256];
     const char *pkg = NULL;
     switch (src) {
-        case 1: pkg = "de.gerontec.kodilauncher/.LauncherActivity";             break;
-        case 2: pkg = "com.cltv.hybrid/com.iwedia.cltv.MainActivity";          break;
+        case 1: pkg = "de.gerontec.kodilauncher/.LauncherActivity";              break;
+        case 2: pkg = "com.cltv.hybrid/com.iwedia.cltv.MainActivity";           break;
         case 3: pkg = "com.google.android.apps.tv.launcherx/.home.HomeActivity"; break;
         default:
             fprintf(stderr, "Unbekannte Quelle: %d (1=Kodi 2=Astra 3=Google)\n", src);
-            return;
+            return -1;
     }
     snprintf(cmd, sizeof(cmd), "am start -n %s", pkg);
-    system(cmd);
+    int r = system(cmd);
     printf("Source: %d (%s)\n", src, pkg); fflush(stdout);
+    return r;
 }
 
-static int screen_state(void) {
+int screen_state(void) {
     FILE *fp = popen("dumpsys power 2>/dev/null", "r");
     char buf[256];
     int st = -1;
