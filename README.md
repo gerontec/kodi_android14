@@ -119,57 +119,97 @@ Kodi settings and the addon manager are PIN-protected to prevent guest changes.
 
 ---
 
-## Boot Behaviour — Kodi as Primary App
+## Kodi Launcher — Source Selector App
 
-### How it works
+`kodi_launcher.apk` (`de.gerontec.kodilauncher`) is a custom Android launcher app that serves two purposes:
 
-`kodi_launcher.apk` is a minimal Android launcher that declares the `HOME` category in its manifest. It is installed on the TV and registered as the preferred HOME activity:
+1. **Boot auto-start** — starts Kodi automatically when the TV powers on
+2. **Source selector** — when launched manually, shows a dialog to choose between Kodi and SAT/DVB-S
+
+### Install
 
 ```bash
 adb connect 192.168.178.43:5555
 adb install kodi_launcher.apk
-adb shell cmd package set-home-activity de.gerontec.kodilauncher/.LauncherActivity
 ```
 
-When the TV **powers on**, Android resolves the HOME activity using the preferred-activity registry. Our launcher is selected, immediately starts Kodi, and exits — so Kodi is the first app the user sees after boot.
+### Boot behaviour
 
-> **Note:** The **Home button** on the remote still navigates to the Google TV Launcher.  
-> This is a Google TV restriction that cannot be bypassed without root access.  
-> The Google TV home screen remains accessible via the Home button (lowest priority in practice — Kodi is primary at boot).
+The app registers a `BootReceiver` with priority 999 for `BOOT_COMPLETED`. When the TV powers on, Kodi starts automatically without any user interaction.
 
-The `install.py` script handles the APK install and home-activity registration automatically.
+### Source selector dialog
+
+When launched from the Google TV app grid (or any shortcut), the launcher shows:
+
+```
+┌──────────────┐
+│   TV Quelle  │
+├──────────────┤
+│  Kodi        │
+│  SAT / DVB-S │
+└──────────────┘
+```
+
+- **Kodi** — launches `org.xbmc.kodi` directly
+- **SAT / DVB-S** — opens the MediaTek TV Center in DVB-S satellite mode (Astra 19.2°E)
+- **Back / Cancel** — closes the dialog, returns to previous app
+
+The launcher activity uses `Theme.DeviceDefault.Dialog.Alert` so the dialog appears as a transparent overlay — fully navigable with the TV remote D-pad.
+
+### Why not set as default HOME?
+
+On Android 14 / Google TV, the built-in Google TV Launcher is a privileged system app with manifest priority 2. User-installed apps are capped at priority 0 and cannot override it without root. The **Home button always opens Google TV** — this is a platform restriction, not a bug.
+
+The Kodi Launcher sits alongside Google TV as a launchable app. The boot-start via `BootReceiver` ensures Kodi is always the first thing visible after power-on regardless.
+
+### Manifest priority
+
+| App | Priority | Role |
+|-----|----------|------|
+| Google TV Launcher | 2 (system) | Home button target |
+| `de.gerontec.kodilauncher` | 1 | Boot auto-start + source selector |
+| FallbackHome | -1000 | Emergency fallback |
 
 ---
 
-## Switching to SAT TV (Astra DVB-S) from within Kodi
+## Switching to SAT TV (Astra DVB-S)
 
-The TV has a built-in DVB-S satellite tuner (Astra 19.2°E via the satellite dish input).  
-A shortcut to switch directly to the satellite tuner is available inside Kodi under **Favourites**.
+The TV has a built-in DVB-S satellite tuner (Astra 19.2°E). There are two ways to switch to it:
 
-### How to switch
+### Via the Kodi Launcher (recommended)
+
+Open the **Kodi Launcher** app from the Google TV home screen and select **SAT / DVB-S**.
+
+### Via Kodi Favourites
 
 1. In Kodi, open **Favourites** (star icon or via the menu)
 2. Select **"SAT TV (Astra)"**
-3. The MTK TV Center opens and switches to the DVB-S satellite input
 
 ### How to return to Kodi
 
-- Press **Back** repeatedly until the Android home screen appears, then relaunch Kodi
-- Or use the app switcher on the remote to switch back to Kodi directly
+- Use the **app switcher** on the remote to switch back to Kodi directly
+- Or press **Back** to reach the Google TV home screen, then relaunch Kodi
 
 ### Technical details
 
-The favourite calls Android's `StartAndroidActivity` built-in:
-
-```
-StartAndroidActivity(com.mediatek.tv.oneworld.tvcenter,,,)
-```
-
-To switch to satellite from the command line:
+The DVB-S switch sends a MediaTek-specific intent with `tunerType=2` (preferred satellite):
 
 ```bash
-adb shell am start -n com.mediatek.tv.oneworld.tvcenter/.nav.TurnkeyUiMainActivity
+adb shell am start \
+  -a com.mediatek.tv.action.TUNER_TYPE \
+  -n com.mediatek.tv.oneworld.tvcenter/.nav.TurnkeyUiMainActivity \
+  --ei tunerType 2 \
+  -f 0x10000000
 ```
+
+| tunerType | Source |
+|-----------|--------|
+| 0 | DVB-T (antenna) |
+| 1 | DVB-C (cable) |
+| **2** | **DVB-S preferred satellite** |
+| 3 | DVB-S general satellite |
+
+TV Input ID for direct ADB use: `com.mediatek.dtv.tvinput.dvbtuner/.DvbsTvInputService/HW0`
 
 ---
 
