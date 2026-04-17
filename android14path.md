@@ -10,23 +10,51 @@ Device: **Sharp 4K UHDTV** · SoC: **MediaTek MT9676PA** · Android 14 (SDK 34) 
 
 Found via `adb shell dumpsys tv_input`:
 
-| Input | ID | State |
-|-------|----|-------|
-| **DVB-S (Satellite)** | `com.mediatek.dtv.tvinput.dvbtuner/.DvbsTvInputService/HW0` | 0 |
-| DVB-T (Antenna) | `com.mediatek.dtv.tvinput.dvbtuner/.DvbTvInputService/HW0` | 0 |
-| DVB-C (Cable) | `com.mediatek.dtv.tvinput.dvbtuner/.DvbcTvInputService/HW0` | 0 |
-| HDMI 1 | `com.mediatek.tis/.HdmiInputService/HW2` | 1 |
-| HDMI 2 | `com.mediatek.tis/.HdmiInputService/HW3` | 1 |
-| HDMI 3 | `com.mediatek.tis/.HdmiInputService/HW4` | 1 |
-| HDMI 4 | `com.mediatek.tis/.HdmiInputService/HW5` | 1 |
-| Analog | `com.mediatek.tis/.AnalogInputService/HW1` | 0 |
-| Composite | `com.mediatek.tis/.CompositeInputService/HW6` | 2 |
+State values: `0` = connected, `1` = connected (no signal / standby), `2` = disconnected
+
+| Input | TvInput ID | HW# | State | ADB method |
+|-------|-----------|-----|-------|------------|
+| **DVB-S (Satellite)** | `com.mediatek.dtv.tvinput.dvbtuner/.DvbsTvInputService/HW0` | HW0 | 0 | `TUNER_TYPE --ei tunerType 2` ✅ |
+| DVB-T (Antenna) | `com.mediatek.dtv.tvinput.dvbtuner/.DvbTvInputService/HW0` | HW0 | 0 | `TUNER_TYPE --ei tunerType 0` ✅ |
+| DVB-C (Cable) | `com.mediatek.dtv.tvinput.dvbtuner/.DvbcTvInputService/HW0` | HW0 | 0 | `TUNER_TYPE --ei tunerType 1` ✅ |
+| ATV (Analog) | `com.mediatek.tis/.AnalogInputService/HW1` | HW1 | 0 | `TUNER_TYPE --ei tunerType -1` ✅ |
+| HDMI 1 | `com.mediatek.tis/.HdmiInputService/HW2` | HW2 | 1 | `VIEW + INPUT_ID` ⚠️ unverified |
+| HDMI 2 | `com.mediatek.tis/.HdmiInputService/HW3` | HW3 | 1 | `VIEW + INPUT_ID` ⚠️ unverified |
+| HDMI 3 | `com.mediatek.tis/.HdmiInputService/HW4` | HW4 | 1 | `VIEW + INPUT_ID` ⚠️ unverified |
+| HDMI 4 | `com.mediatek.tis/.HdmiInputService/HW5` | HW5 | 1 | `VIEW + INPUT_ID` ⚠️ unverified |
+| Composite | `com.mediatek.tis/.CompositeInputService/HW6` | HW6 | 2 | `VIEW + INPUT_ID` ⚠️ disconnected |
 
 ### TV Center App
 
 Package: `com.mediatek.tv.oneworld.tvcenter`  
 APK: `/system_ext/priv-app/TvLivePlayer/TvLivePlayer.apk`  
 Main Activity: `com.mediatek.tv.oneworld.tvcenter.nav.TurnkeyUiMainActivity`
+
+### HDMI / External Input Switch (Standard Android TV)
+
+For HDMI and Composite inputs the standard Android TIF `VIEW` intent is used.
+`TUNER_TYPE` only handles tuner-based sources (DVB-*/ATV).
+
+```bash
+# HDMI 1 (HW2)
+adb shell am start \
+  -a android.intent.action.VIEW \
+  -d 'content://android.media.tv/channel' \
+  -n com.mediatek.tv.oneworld.tvcenter/.nav.TurnkeyUiMainActivity \
+  --es 'android.media.tv.extra.INPUT_ID' 'com.mediatek.tis/.HdmiInputService/HW2' \
+  -f 0x10000000
+
+# HDMI 2 → HW3 / HDMI 3 → HW4 / HDMI 4 → HW5
+# Composite → com.mediatek.tis/.CompositeInputService/HW6
+```
+
+> **Status:** TvCenter launches and receives the intent (confirmed via logcat `onNewIntent`).  
+> Whether the actual HDMI source switches needs live verification on the TV screen.  
+> Use `kodi_launcher.apk` — it lists all 10 inputs as a dialog for direct on-device testing.
+
+Internal MediaTek extra for HDMI port (from smali `Constants.smali`):
+- Extra key: `HDMI_PORT_ID` (integer, 0-based port index)
+- Only relevant if direct HDMI service call is needed; `INPUT_ID` via TvCenter is preferred.
 
 ### DVB-S Switch Intent (MediaTek-specific)
 
@@ -57,6 +85,18 @@ TurnkeyUiMainActivity: onNewIntent
 ```
 
 **Note:** The standard Android TV approach (`android.intent.action.VIEW` with `android.media.tv.extra.INPUT_ID`) was tried first but did not switch the source correctly on this device. The MediaTek-specific `TUNER_TYPE` intent is required.
+
+### Complete tunerType map
+
+From `TvLivePlayer.apk` smali (log strings in `updateOpAppStatusWhenChangeTunerType`):
+
+| tunerType | Source | ADB extra |
+|-----------|--------|-----------|
+| -1 | ATV / Analog | `--ei tunerType -1` |
+| 0 | DVB-T / Antenna | `--ei tunerType 0` |
+| 1 | DVB-C / Cable | `--ei tunerType 1` |
+| **2** | **DVB-S preferred satellite** | `--ei tunerType 2` |
+| 3 | DVB-S general satellite | `--ei tunerType 3` |
 
 ### Other useful TV Center intents
 
@@ -122,6 +162,36 @@ adb shell settings put global stay_on_while_plugged_in 0   # allow screen-off wh
 ```
 
 All other values left unchanged. Result: screen turns off after 1 hour (light sleep), network stays active, no deep suspend.
+
+---
+
+## Input Selector APK (`kodi_launcher.apk`)
+
+A dialog-based launcher that lists all 10 inputs for direct on-device testing.  
+Source: `LauncherActivity.smali`
+
+```
+┌────────────────────┐
+│    TV Eingang      │
+├────────────────────┤
+│  Kodi              │  → org.xbmc.kodi/.Splash
+│  SAT / DVB-S       │  → TUNER_TYPE tunerType=2
+│  DVB-T / Antenne   │  → TUNER_TYPE tunerType=0
+│  DVB-C / Kabel     │  → TUNER_TYPE tunerType=1
+│  ATV / Analog      │  → TUNER_TYPE tunerType=-1
+│  HDMI 1            │  → VIEW INPUT_ID HW2
+│  HDMI 2            │  → VIEW INPUT_ID HW3
+│  HDMI 3            │  → VIEW INPUT_ID HW4
+│  HDMI 4            │  → VIEW INPUT_ID HW5
+│  Composite / CVBS  │  → VIEW INPUT_ID HW6
+└────────────────────┘
+```
+
+Install and launch:
+```bash
+adb install kodi_launcher.apk
+adb shell am start -n de.gerontec.kodilauncher/.LauncherActivity -f 0x10000000
+```
 
 ---
 
