@@ -17,11 +17,11 @@ import urllib.request
 from collections import defaultdict
 
 RELAYS = {"ch", "at", "us"}          # countries with a working exit (it: no Privado tunnel yet)
-LISTS = ["de", "at", "ch", "it", "us", "ru"]
+LISTS = ["de", "at", "ch", "it", "us", "ru", "fr"]
 # ru: every channel via the US relay on heissa (EU blocks some Russian channels); the list is what plays
 # from the US (probe_m3u.py run on heissa -> --ru-alive)
 NAMES = {"de": "Deutschland", "at": "Österreich", "ch": "Schweiz", "it": "Italia", "us": "USA",
-         "ru": "Russia"}
+         "ru": "Russia", "fr": "France"}
 
 # Cyrillic -> Latin (BGN/PCGN-like) so guests can read the channel names
 CYR = dict(zip("абвгдеёжзийклмнопрстуфхцчшщъыьэюяіїєґ",
@@ -117,10 +117,20 @@ def main():
     ap.add_argument("--token-file", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--fritzbox", default="http://192.168.178.1", help="cable tuner base URL, '' to skip")
-    ap.add_argument("--ru-alive", help="probe result (OK<TAB>name<TAB>why<TAB>url) of raw_ru.m3u from the US")
+    ap.add_argument("--ru-alive", help="old form of --via ru=PROBE,<iptv>/raw_ru.m3u")
+    ap.add_argument("--via", action="append", default=[],
+                    help="cc=probe.tsv,list.m3u: every alive channel of list.m3u through relay cc "
+                         "(probe_m3u.py run from that relay's exit)")
     ap.add_argument("--dead", help="source URLs that delivered nothing in the daily 60 s check (stream_check.py)")
     a = ap.parse_args()
     token = open(a.token_file).read().strip()
+    via = {}
+    for v in a.via:
+        cc, _, files = v.partition("=")
+        probe, _, raw = files.partition(",")
+        via[cc] = (probe, raw)
+    if a.ru_alive and "ru" not in via:
+        via["ru"] = (a.ru_alive, os.path.join(a.iptv, "raw_ru.m3u"))
     lists, seen = defaultdict(list), set()
     dead = set(open(a.dead, encoding="utf-8").read().split()) if a.dead else set()
     seen |= dead                        # a dead source URL is treated as already used: never listed
@@ -133,8 +143,8 @@ def main():
             continue
         if cc in ("de", "at", "ch") and plain(info) in on_cable:
             continue                    # the cable tuner carries it: no internet copy
-        if cc == "ru" and a.ru_alive:
-            continue                    # Russian list comes from the US probe below
+        if cc in via:
+            continue                    # this country comes completely through its relay (below)
         if cc in LISTS and url not in seen:
             seen.add(url)
             lists[cc].append((regroup(info, NAMES[cc]), url))
@@ -149,14 +159,13 @@ def main():
                 relay = f"https://{cc}.heissa.de/{token}/{b64(url)}.m3u8"
                 lists[cc].append((regroup(info, NAMES[cc] + " (geo)"), relay))
 
-    if a.ru_alive:
-        alive = {l.rstrip("\n").split("\t")[3] for l in open(a.ru_alive, encoding="utf-8")
-                 if l.startswith("OK\t")}
-        for info, url in entries(os.path.join(a.iptv, "raw_ru.m3u")):
+    for cc, (probe, raw) in via.items():
+        alive = {l.rstrip("\n").split("\t")[3] for l in open(probe, encoding="utf-8") if l.startswith("OK\t")}
+        for info, url in entries(raw):
             if url in alive and url not in seen and not junk(info):
                 seen.add(url)
-                relay = f"https://ru.heissa.de/{token}/{b64(url)}{'.m3u8' if '.m3u8' in url else ''}"
-                lists["ru"].append((regroup(info, NAMES["ru"]), relay))
+                relay = f"https://{cc}.heissa.de/{token}/{b64(url)}{'.m3u8' if '.m3u8' in url else ''}"
+                lists[cc].append((regroup(info, NAMES[cc]), relay))
 
     def write(f, items, sort=True):
         for info, url in (sorted(items, key=lambda e: e[0].rpartition(",")[2].lower()) if sort else items):

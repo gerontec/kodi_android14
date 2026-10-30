@@ -44,7 +44,7 @@ def kodi_up():
 
 def main():
     n = int(sys.argv[1])
-    cc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] in ("de", "at", "ch", "it", "us", "ru") else "de"
+    cc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] in ("de", "at", "ch", "it", "us", "ru", "fr") else "de"
     name, url = channels(cc)[n]
     if not kodi_up():
         subprocess.run(["adb", "connect", TV], capture_output=True, timeout=15)

@@ -9,6 +9,7 @@ TVHeadend was removed (2026-10-30). Kodi on the TV reads one M3U and plays strea
 | `at/ch.heissa.de` | Austrian / Swiss IPTV | geo-blocked ones via relay on ipgate1 (Privado exits 1043/1041) |
 | `it.heissa.de` | Italian IPTV | direct (no Italian exit yet) |
 | `us.heissa.de` | US IPTV | geo-blocked ones via relay on heissa (US IP) |
+| `fr.heissa.de` | French IPTV | **all** via relay on ipgate1 directly (IONOS IP, located FR); list = what plays from ipgate1 (`--via fr=probe_fr.tsv,fr_iptvorg.m3u`) |
 | `ru.heissa.de` | Russian IPTV, names transliterated to Latin | **all** via relay on heissa (US IP): EU blocks some Russian channels; list = what plays from the US (`probe_m3u.py raw_ru.m3u` run on heissa → `--ru-alive`) |
 
 - `make_country_m3u.py` (kellertreppe): alive IPTV list + FRITZ!Box `/dvb/m3u/{tvhd,tvsd,radio}.m3u`
@@ -51,3 +52,17 @@ The relay sends `Cache-Control: max-age=60` for segments and `max-age=2` for pla
 caches the stream paths (`CacheEnable disk` + `CacheLock`, htcacheclean 2 GB). N viewers of one channel cost
 the source / Privado tunnel one download (checked: second request `X-Cache: HIT`, 8.4 s → 2.7 s).
 Real multicast is not possible over the internet; the FRITZ!Box serves cable TV unicast (RTSP) only.
+
+## One upstream stream per channel (single-flight)
+
+`hls_relay.py` keeps fetched bodies in memory (segments 60 s, playlists 1 s, 400 MB LRU) and lets concurrent
+requests for the same URL wait for the one running download (`X-Relay: fetched|shared`). Measured with TV + PC
+on one channel: 68 client segment requests → 38 upstream fetches (one per distinct segment).
+Real multicast is impossible over the internet (heissa has no multicast range; WireGuard/OpenVPN tun carry
+unicast only).
+
+## SRF (not possible yet)
+
+SRF live streams need a token from `il.srgssr.ch`, which answers `GEOBLOCK` for every exit we have:
+ipgate1 direct (FR), Privado zrh-009 and zrh-010 (91.148.244.x, „virtual" Zurich), Privado AT. A real Swiss
+IP (small Swiss VPS or a device at a Swiss home as WireGuard peer) is needed.

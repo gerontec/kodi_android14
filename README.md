@@ -242,6 +242,7 @@ Everything below lives in [`tvcontrol/`](tvcontrol/) — details in
 | `de.heissa.de` | FRITZ!Box cable (DVB-C via RTSP, preferred) + German IPTV | home connection |
 | `at.` `ch.` `it.heissa.de` | Austrian / Swiss / Italian IPTV | geo-blocked ones via Privado country exits on ipgate1 |
 | `us.heissa.de` | US IPTV | geo-blocked ones via the US IP of heissa |
+| `fr.heissa.de` | French IPTV | all via ipgate1 directly (French IP) |
 | `ru.heissa.de` | Russian IPTV, names in Latin script | all via the US IP of heissa (EU blocks some channels) |
 | `https://tv.heissa.de/tv_all.pdf` | printable list, one section per address | rebuilt daily |
 
@@ -262,7 +263,7 @@ laptop (hls.js), **TV** plays it on the Sharp (Kodi JSON-RPC, home/VPN only). Pl
   placeholders and dead public-broadcaster SD entries removed.
 - `hls_relay.py`: country HLS relay (token in the path, rewrites playlists, serves one variant ≤ 5 Mbit/s so
   Kodi opens in time). ipgate1 `10.9.0.1:18099` (CH/AT via Privado), heissa `127.0.0.1:18099` (US/RU).
-- Apache front cache on heissa: N viewers of one channel → one download from the source (`X-Cache: HIT`).
+- One download per channel: relay single-flight memory cache + Apache front cache — N viewers of one channel → one stream from the source.
 - Daily 04:30 `iptv_daily.sh`: every channel streamed up to 60 s with ffmpeg; nothing arrives → removed from
   lists, frontend and PDF (first run: 375 alive, 241 dead). heissa pulls the lists at 05:30.
 

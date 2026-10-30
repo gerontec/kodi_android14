@@ -15,12 +15,61 @@ import base64
 import re
 import subprocess
 import sys
+import threading
+import time
 import urllib.parse
+from collections import OrderedDict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 EXITS = {}
 TOKEN = ""
 CHUNK = 64 * 1024
+SEGMENT_TTL, PLAYLIST_TTL = 60, 1          # seconds a fetched body is shared with other viewers
+CACHE_MAX = 400 * 1024 * 1024              # bytes kept in memory (LRU)
+
+
+class SingleFlight:
+    """Shared upstream fetches: the first request for a URL downloads it, concurrent and later
+    requests within the TTL get the same bytes. N viewers of one channel = one upstream stream."""
+
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.inflight = {}                 # key -> Event
+        self.store = OrderedDict()         # key -> (expires, body)
+        self.size = 0
+
+    def get(self, key, fetch, ttl_of):
+        while True:
+            with self.lock:
+                hit = self.store.get(key)
+                if hit and hit[0] > time.time():
+                    self.store.move_to_end(key)
+                    return hit[1], True
+                ev = self.inflight.get(key)
+                if ev is None:
+                    ev = self.inflight[key] = threading.Event()
+                    break
+            ev.wait(45)                    # another request is fetching this URL
+        try:
+            body = fetch()
+            if body is not None:
+                with self.lock:
+                    old = self.store.pop(key, None)
+                    if old:
+                        self.size -= len(old[1])
+                    self.store[key] = (time.time() + ttl_of(body), body)
+                    self.size += len(body)
+                    while self.size > CACHE_MAX and self.store:
+                        _, (_, b) = self.store.popitem(last=False)
+                        self.size -= len(b)
+            return body, False
+        finally:
+            with self.lock:
+                self.inflight.pop(key, None)
+            ev.set()
+
+
+FLIGHT = SingleFlight()
 
 
 def b64e(url):
@@ -96,38 +145,34 @@ class Relay(BaseHTTPRequestHandler):
             return self.send_error(400)
         if not url.startswith(("http://", "https://")):
             return self.send_error(400)
-        p = curl(url, EXITS[cc])
-        head = p.stdout.read(CHUNK)
-        if not head and p.wait() != 0:
+        def fetch():
+            p = curl(url, EXITS[cc])
+            body = p.stdout.read()
+            return body if p.wait() == 0 and body else None
+
+        body, shared = FLIGHT.get((cc, url), fetch,
+                                  lambda b: PLAYLIST_TTL if b.lstrip().startswith(b"#EXTM3U") else SEGMENT_TTL)
+        if body is None:
             return self.send_error(502, "upstream failed")
-        if head.lstrip().startswith(b"#EXTM3U"):
-            body = head + p.stdout.read()
-            p.wait()
+        if body.lstrip().startswith(b"#EXTM3U"):
             data = rewrite(body.decode("utf-8", "replace"), url).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/vnd.apple.mpegurl")
-            self.send_header("Content-Length", str(len(data)))
-            # live playlists change every few seconds: a front cache may reuse them briefly
-            self.send_header("Cache-Control", "public, max-age=2")
-            self.end_headers()
-            self.wfile.write(data)
-            return
+            ctype, cache = "application/vnd.apple.mpegurl", "public, max-age=2"
+        else:
+            data = body
+            ctype = {".ts": "video/mp2t", ".aac": "audio/aac", ".mp4": "video/mp4", ".m4s": "video/iso.segment",
+                     ".vtt": "text/vtt"}.get(ext_of(url), "application/octet-stream")
+            cache = "public, max-age=60"
         self.send_response(200)
-        ctype = {".ts": "video/mp2t", ".aac": "audio/aac", ".mp4": "video/mp4", ".m4s": "video/iso.segment",
-                 ".vtt": "text/vtt"}.get(ext_of(url), "application/octet-stream")
         self.send_header("Content-Type", ctype)
-        # segments never change: the Apache cache on heissa serves repeats, so N viewers of one
-        # channel cost the source (and the Privado tunnel) one download
-        self.send_header("Cache-Control", "public, max-age=60")
+        self.send_header("Content-Length", str(len(data)))
+        # segments never change; front caches and other viewers reuse them
+        self.send_header("Cache-Control", cache)
+        self.send_header("X-Relay", "shared" if shared else "fetched")
         self.end_headers()
         try:
-            while head:
-                self.wfile.write(head)
-                head = p.stdout.read(CHUNK)
+            self.wfile.write(data)
         except (BrokenPipeError, ConnectionResetError):
             pass
-        finally:
-            p.kill()
 
 
 def main():

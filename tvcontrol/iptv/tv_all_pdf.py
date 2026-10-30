@@ -19,6 +19,7 @@ SECTIONS = [
     ("ch", "ch.heissa.de", "Schweiz · IPTV  (Kodi)"),
     ("it", "it.heissa.de", "Italia · IPTV  (Kodi)"),
     ("us", "us.heissa.de", "USA · IPTV  (Kodi)"),
+    ("fr", "fr.heissa.de", "France · IPTV via French IP  (Kodi)"),
     ("ru", "ru.heissa.de", "Russia · IPTV via US exit (no EU blocking)  (Kodi)"),
 ]
 W, H = A4

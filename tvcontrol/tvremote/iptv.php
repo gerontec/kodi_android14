@@ -6,9 +6,9 @@ $ip = require_allowed(true);
 $can_tv = allowed($ip);          // only home LAN / VPN may switch the TV
 
 // list per country: ?cc=de|at|ch|it|us|ru  (/var/lib/tvremote/iptv_<cc>.m3u)
-$cc = preg_match('/^(de|at|ch|it|us|ru)$/', $_GET['cc'] ?? 'de') ? ($_GET['cc'] ?? 'de') : 'de';
+$cc = preg_match('/^(de|at|ch|it|us|ru|fr)$/', $_GET['cc'] ?? 'de') ? ($_GET['cc'] ?? 'de') : 'de';
 $titles = ['de' => 'Kabel & IPTV Deutschland', 'at' => 'Österreich · IPTV', 'ch' => 'Schweiz · IPTV',
-           'it' => 'Italia · IPTV', 'us' => 'USA · IPTV', 'ru' => 'Russia · IPTV (via US)'];
+           'it' => 'Italia · IPTV', 'us' => 'USA · IPTV', 'ru' => 'Russia · IPTV (via US)', 'fr' => 'France · IPTV'];
 $items = [];
 $name = null; $group = '';
 foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
