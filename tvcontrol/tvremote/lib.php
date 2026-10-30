@@ -35,9 +35,16 @@ function allowed(string $ip): bool {
     return false;
 }
 
-function require_allowed(): string {
+// family members abroad log in at heissa (Apache Basic Auth); heissa passes the user name on
+function family_user(): string {
+    if (($_SERVER['REMOTE_ADDR'] ?? '') !== PROXY) return '';
+    return preg_replace('/[^a-z0-9_-]/i', '', $_SERVER['HTTP_X_FAMILY_USER'] ?? '');
+}
+
+// $family: also admit logged-in family members (watch only, never control the TV)
+function require_allowed(bool $family = false): string {
     $ip = client_ip();
-    if (!allowed($ip)) {
+    if (!allowed($ip) && !($family && family_user() !== '')) {
         http_response_code(403);
         echo "<!doctype html><meta charset=utf-8><title>TV</title><p>Nur im Haus-WLAN · home Wi-Fi only ($ip)</p>";
         exit;

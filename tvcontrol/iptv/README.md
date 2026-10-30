@@ -32,3 +32,14 @@ TVHeadend was removed (2026-10-30). Kodi on the TV reads one M3U and plays strea
 - `https://<cc>.heissa.de/` = channel list with **▶ Browser** (hls.js, plays on the phone/laptop) and
   **TV** (plays in Kodi on the Sharp); other paths go to the relay. Any player works too:
   `mpv https://ru.heissa.de/list.m3u`.
+
+## Family access worldwide
+
+- Start pages and lists: home connection / VPN without login, everyone else with one shared password
+  (Apache Basic Auth, user `family`, `/etc/apache2/iptv-family.htpasswd`, `htpasswd -B` to change it).
+  Logged-in family members can watch in the browser or any player, but the **TV** button (Kodi on the Sharp)
+  stays home/VPN only (`lib.php` `require_allowed(true)` + `allowed()`).
+- `iptv_share_guard.py` (heissa, root cron every minute): more than 9 distinct foreign IPs streaming within
+  15 min → every further IP is banned for 1 day via fail2ban jail `iptv-share` (+ mail).
+- Capacity (measured 2026-10-30): heissa 600 Mbit/s → ~50 parallel streams (us/ru, max 5 Mbit/s each);
+  Privado tunnel on ipgate1 ~50 Mbit/s per country → ~9-10 parallel ch/at streams.

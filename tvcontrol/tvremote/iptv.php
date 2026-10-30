@@ -2,7 +2,8 @@
 // de.heissa.de: IPTV / cable channel list for guests; tapping plays the channel in Kodi on the TV.
 // List: /var/lib/tvremote/iptv_de.m3u (make_country_m3u.py), playback: sudo -u pi kodi_play.py <index>.
 require __DIR__ . '/lib.php';
-$ip = require_allowed();
+$ip = require_allowed(true);
+$can_tv = allowed($ip);          // only home LAN / VPN may switch the TV
 
 // list per country: ?cc=de|at|ch|it|us|ru  (/var/lib/tvremote/iptv_<cc>.m3u)
 $cc = preg_match('/^(de|at|ch|it|us|ru)$/', $_GET['cc'] ?? 'de') ? ($_GET['cc'] ?? 'de') : 'de';
@@ -22,6 +23,11 @@ foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['i'])) {
     header('Content-Type: application/json');
+    if (!$can_tv) {
+        http_response_code(403);
+        echo json_encode(['ok' => false, 'msg' => 'TV nur im Haus · TV control at home only']);
+        exit;
+    }
     $i = (string)$_POST['i'];
     if (!ctype_digit($i) || (int)$i >= count($items)) {
         echo json_encode(['ok' => false, 'msg' => 'unknown channel']);
@@ -82,7 +88,7 @@ foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url']
       <?php if (preg_match('#^https?://#', $u)): ?>
         <button type="button" class="btn btn-sm btn-primary web" data-url="<?= htmlspecialchars($u) ?>">▶ Browser</button>
       <?php endif; ?>
-      <button type="button" class="btn btn-sm btn-outline-secondary tv">TV</button>
+      <?php if ($can_tv): ?><button type="button" class="btn btn-sm btn-outline-secondary tv">TV</button><?php endif; ?>
     </div>
   <?php endforeach; ?>
   </div>
