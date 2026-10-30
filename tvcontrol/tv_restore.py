@@ -21,7 +21,7 @@ BASELINE = os.path.join(BASE, "baseline")
 LOG = os.path.join(BASE, "restore.log")
 KODI = "/sdcard/Android/data/org.xbmc.kodi/files/.kodi/userdata"
 KODI_FILES = ["guisettings.xml", "favourites.xml", "sources.xml", "profiles.xml",
-              "addon_data/pvr.hts"]
+              "addon_data/pvr.iptvsimple"]
 DEFAULT_CHANNEL = "934"   # ANTENNE BAYERN on Astra 19.2E
 
 # values that change on their own or must never be rewritten

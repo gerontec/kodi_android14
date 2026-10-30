@@ -5,7 +5,7 @@ Includes channel list (German HD, Austrian, Russian, international, radio) and m
 
 ---
 
-> **Status 2026-10-30:** TVHeadend and pvr.hts are no longer used — see
+> **Status 2026-10-30:** TVHeadend is removed from all hosts (kellertreppe, heissa, ipgate1) and pvr.hts is disabled — see
 > [Guest house TV system](#guest-house-tv-system-2026-10-30) at the end.
 
 ## Step 1 — Enable Developer Mode & ADB on the TV
@@ -90,7 +90,7 @@ The script will automatically:
 | File | Description |
 |------|-------------|
 | `tvsd_filtered.m3u` | 150 TV channels + 106 radio stations |
-| `pvr-instance-settings.xml` | PVR IPTV Simple Client configuration |
+| `pvr-instance-settings.xml` | PVR IPTV Simple Client configuration (M3U from kellertreppe, see Guest house TV system) |
 | `profiles.xml` | Kodi master lock (PIN protection) |
 
 ### Channel groups
