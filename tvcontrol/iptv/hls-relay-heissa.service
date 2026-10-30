@@ -1,0 +1,17 @@
+[Unit]
+Description=Country HLS relay for the Sharp TV IPTV list (us exit, heissa)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=hlsrelay
+ExecStart=/usr/bin/python3 /opt/hls_relay/hls_relay.py --bind 127.0.0.1 --port 18099 --token-file /etc/hls_relay.token --exit us=direct
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

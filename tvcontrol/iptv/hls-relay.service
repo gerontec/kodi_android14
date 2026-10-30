@@ -1,0 +1,17 @@
+[Unit]
+Description=Country HLS relay for the Sharp TV IPTV list (ch/at/de exits)
+After=network-online.target wg-quick@wg0.service socks-ch.service socks-at.service
+Wants=network-online.target
+
+[Service]
+User=hlsrelay
+ExecStart=/usr/bin/python3 /opt/hls_relay/hls_relay.py --bind 10.9.0.1 --port 18099 --token-file /etc/hls_relay.token --exit ch=socks5h://10.9.0.1:1041 --exit at=socks5h://10.9.0.1:1043 --exit de=direct
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target
