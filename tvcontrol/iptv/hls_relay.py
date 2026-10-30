@@ -44,8 +44,27 @@ def curl(url, exit_url):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
 
 
+MAX_BW = 5_000_000   # long-haul relay: one variant up to 5 Mbit/s
+
+
+def one_variant(playlist):
+    """Reduce a master playlist to a single variant (best <= MAX_BW, else the lowest).
+    Kodi's ffmpeg HLS demuxer probes every variant on open, which times out over the relay."""
+    lines = playlist.splitlines()
+    variants = [(int(re.search(r"BANDWIDTH=(\d+)", l).group(1)), i)
+                for i, l in enumerate(lines) if l.startswith("#EXT-X-STREAM-INF") and "BANDWIDTH=" in l]
+    if len(variants) < 2:
+        return playlist
+    fit = [v for v in variants if v[0] <= MAX_BW]
+    keep = max(fit)[1] if fit else min(variants)[1]
+    drop = {i for _, i in variants if i != keep}
+    drop |= {i + 1 for i in drop}                      # the URI line after each dropped STREAM-INF
+    return "\n".join(l for i, l in enumerate(lines) if i not in drop)
+
+
 def rewrite(playlist, base):
     """Point every URI of an HLS playlist at the relay (sibling path, same directory)."""
+    playlist = one_variant(playlist)
     out = []
     for line in playlist.splitlines():
         if line and not line.startswith("#"):

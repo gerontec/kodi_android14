@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Play entry N of the de.heissa.de IPTV list in Kodi on the Sharp TV (runs as pi: adb key owner).
 
-usage: kodi_play.py N      (N = 0-based index into /var/lib/tvremote/iptv_de.m3u)
+usage: kodi_play.py N [CC]   (N = 0-based index into /var/lib/tvremote/iptv_<CC>.m3u, CC default de)
 """
 import base64
 import json
@@ -13,7 +13,7 @@ import urllib.request
 TV = "192.168.178.195:5555"
 KODI = "http://192.168.178.195:8080/jsonrpc"
 AUTH = "Basic " + base64.b64encode(b"kodi:654321").decode()
-LIST = "/var/lib/tvremote/iptv_de.m3u"
+LIST = "/var/lib/tvremote/iptv_{}.m3u"
 
 
 def rpc(method, params=None):
@@ -23,9 +23,9 @@ def rpc(method, params=None):
     return json.load(urllib.request.urlopen(req, timeout=10))
 
 
-def channels():
+def channels(cc):
     out, name = [], None
-    for line in open(LIST, encoding="utf-8"):
+    for line in open(LIST.format(cc), encoding="utf-8"):
         line = line.strip()
         if line.startswith("#EXTINF"):
             name = line.rpartition(",")[2]
@@ -44,7 +44,8 @@ def kodi_up():
 
 def main():
     n = int(sys.argv[1])
-    name, url = channels()[n]
+    cc = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] in ("de", "at", "ch", "it", "us", "ru") else "de"
+    name, url = channels(cc)[n]
     if not kodi_up():
         subprocess.run(["adb", "connect", TV], capture_output=True, timeout=15)
         subprocess.run(["adb", "-s", TV, "shell", "monkey", "-p", "org.xbmc.kodi", "-c",

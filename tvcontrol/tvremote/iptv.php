@@ -4,9 +4,11 @@
 require __DIR__ . '/lib.php';
 $ip = require_allowed();
 
+// list per country: ?cc=de|at|ch|it|us|ru  (/var/lib/tvremote/iptv_<cc>.m3u)
+$cc = preg_match('/^(de|at|ch|it|us|ru)$/', $_GET['cc'] ?? 'de') ? ($_GET['cc'] ?? 'de') : 'de';
 $items = [];
 $name = null; $group = '';
-foreach (@file(DATA . '/iptv_de.m3u', FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
     if (str_starts_with($line, '#EXTINF')) {
         $name = trim(substr($line, strrpos($line, ',') + 1));
         $group = preg_match('/group-title="([^"]*)"/', $line, $m) ? $m[1] : '';
@@ -24,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['i'])) {
         exit;
     }
     $out = []; $rc = 0;
-    exec('sudo -n -u pi /home/pi/tvrestore/kodi_play.py ' . escapeshellarg($i) . ' 2>&1', $out, $rc);
-    error_log("iptv $ip -> $i rc=$rc");
+    exec('sudo -n -u pi /home/pi/tvrestore/kodi_play.py ' . escapeshellarg($i) . ' ' . escapeshellarg($cc) . ' 2>&1', $out, $rc);
+    error_log("iptv $ip -> $cc/$i rc=$rc");
     echo json_encode(['ok' => $rc === 0, 'i' => (int)$i,
                       'msg' => $rc === 0 ? '▶ ' . $items[(int)$i]['name'] : 'Fehler · error: ' . implode(' ', $out)]);
     exit;
@@ -100,7 +102,7 @@ document.querySelectorAll('.ch').forEach(b => b.addEventListener('click', async 
   if (b.classList.contains('busy')) return;
   b.classList.add('busy'); show('… ' + b.textContent);
   try {
-    const r = await fetch(location.pathname, { method: 'POST', body: new URLSearchParams({ i: b.value }) });
+    const r = await fetch(location.pathname + location.search, { method: 'POST', body: new URLSearchParams({ i: b.value }) });
     const j = await r.json();
     if (j.ok) document.querySelectorAll('.ch').forEach(x => x.classList.toggle('active', x.value === String(j.i)));
     show(j.msg);
