@@ -109,7 +109,8 @@ foreach ($channels as $c) $groups[$c['radio'] ? 'Radio' : 'TV'][] = $c;
   <?php foreach ($list as $c): ?>
     <button class="ch list-group-item list-group-item-action d-flex align-items-center gap-3<?= (string)$c['num'] === $current ? ' active' : '' ?>"
       name="ch" value="<?= (int)$c['num'] ?>" data-n="<?= htmlspecialchars(strtolower($c['name'])) ?>">
-      <span class="num"><?= (int)$c['num'] ?></span><span class="name"><?= htmlspecialchars($c['name']) ?></span></button>
+      <span class="num"><?= (int)$c['num'] ?></span><span class="name<?= !empty($c['default']) ? ' fw-bold' : '' ?>"><?= htmlspecialchars($c['name']) ?></span>
+      <?php if (!empty($c['default'])): ?><span class="badge text-bg-secondary ms-auto">Standard</span><?php endif; ?></button>
   <?php endforeach; ?>
   </form>
   </section>

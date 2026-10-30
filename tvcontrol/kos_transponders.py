@@ -1,41 +1,83 @@
 #!/usr/bin/env python3
-"""Map channel names to their Astra 19.2E transponder from a saved KingOfSat position page.
+"""Annotate the TV channel list with KingOfSat data for Astra 19.2E and pick the guest channels.
 
-usage: kos_transponders.py kos_pos-19.2E.html channels.tsv > channels_tp.tsv
-       (adds a 3rd column "12149 H 27500" per channel; empty when not found)
+usage: kos_transponders.py kos_pos-19.2E.html channels.tsv [--guest] > out.tsv
+  out columns: number, name, transponder ("12148 H 27500"), country, genre, encryption,
+               audio languages, radio(1/0)
+  --guest: keep only free, German-language channels from DE/AT/CH without shopping/adult ones
 """
 import html
 import re
 import sys
 
-
-def transponders(page):
-    """{normalised channel name: 'freq pol SR'} in page order (first hit wins)."""
-    out, tp = {}, None
-    # transponder header, then channel links: the TV shows the service name from title="Id: ..."
-    token = re.compile(r'<td class="bld">(\d+)(?:\.\d+)? ([HV])</td>.*?<td><a class="bld">(\d+)</a></td>'
-                       r'|<a ([^>]*class="A\d"[^>]*)>([^<]*)</a>', re.S | re.I)
-    for m in token.finditer(page):
-        if m.group(1):
-            tp = f"{m.group(1)} {m.group(2)} {m.group(3)}"
-        elif tp:
-            sid = re.search(r'title="Id: ([^"]*)"', m.group(4))
-            for name in (sid.group(1) if sid else None, m.group(5)):
-                if name:
-                    out.setdefault(norm(html.unescape(name)), tp)
-    return out
+SHOPPING = re.compile(r"teleshopping|shopping|adult|erotic", re.I)
+SHOP_NAMES = re.compile(r"\b(QVC|HSE|Juwelo|1-2-3\.tv|sonnenklar|Channel21|Mediashop|Astro ?TV|"
+                        r"Sex\w*|Erotik|Kontakte|EROTIKA|Beate-Uhse|Blue Hustler|Dorcel|Babestation\w*|"
+                        r"Dates|Girls|Test-\w+)\b", re.I)
+COUNTRIES = {"germany", "austria", "switzerland"}
+# German-language channels registered under another country
+ALLOW_FOREIGN = re.compile(r"^arte\b", re.I)
 
 
 def norm(s):
     return re.sub(r"[^a-z0-9äöü]", "", s.lower())
 
 
-def main(page_path, tsv_path):
-    tps = transponders(open(page_path, encoding="utf-8", errors="replace").read())
+def cell(row, cls):
+    m = re.search(r'<td class="[^"]*\b' + cls + r'\b[^"]*">(.*?)</td>', row, re.S)
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", m.group(1)))).strip() if m else ""
+
+
+def channels(page):
+    """{normalised name: dict(tp, country, genre, enc, langs, radio)} in page order (first hit wins)."""
+    out, tp = {}, None
+    token = re.compile(r'<td class="n?bld">(\d+)(?:\.\d+)? ([HV])</td>.*?<td><a class="bld">(\d+)</a></td>'
+                       r'|<tr data-channel-id="\d*">(.*?)</tr>', re.S)
+    for m in token.finditer(page):
+        if m.group(1):
+            tp = f"{m.group(1)} {m.group(2)} {m.group(3)}"
+            continue
+        row = m.group(4)
+        if not tp:
+            continue
+        sid = re.search(r'title="Id: ([^"]*)"', row)
+        info = {
+            "tp": tp,
+            "country": cell(row, "pays"),
+            "genre": cell(row, "genre"),
+            "enc": cell(row, r"encryption-label") or ("Clear" if "Clear" in row else ""),
+            "langs": " ".join(sorted(set(re.findall(r'<font color="blue">(\w+)</font>', row)))),
+            "radio": "audio.png" in row,
+        }
+        enc = re.search(r'class="encryption-label">([^<]*)<', row)
+        info["enc"] = enc.group(1).strip() if enc else ""
+        names = [sid.group(1) if sid else None, cell(row, "ch")]
+        for name in names:
+            if name:
+                out.setdefault(norm(name), info)
+    return out
+
+
+def guest_ok(name, i):
+    return (i["enc"] == "Clear" and "ger" in i["langs"].split()
+            # radio rows carry no country on KingOfSat; TV channels must name DE/AT/CH
+            and (i["country"].lower() in COUNTRIES or (i["radio"] and not i["country"])
+                 or ALLOW_FOREIGN.search(name))
+            and not SHOPPING.search(i["genre"]) and not SHOP_NAMES.search(name)
+            and not re.match(r"^(ALT_|\.$)", name))
+
+
+def main(page_path, tsv_path, guest):
+    info = channels(open(page_path, encoding="utf-8", errors="replace").read())
     for line in open(tsv_path, encoding="utf-8"):
         num, _, name = line.rstrip("\n").partition("\t")
-        print(f"{num}\t{name}\t{tps.get(norm(name), '')}")
+        i = info.get(norm(name))
+        if guest and (not i or not guest_ok(name, i)):
+            continue
+        i = i or {"tp": "", "country": "", "genre": "", "enc": "", "langs": "", "radio": False}
+        print("\t".join([num, name, i["tp"], i["country"], i["genre"], i["enc"], i["langs"],
+                         "1" if i["radio"] else "0"]))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], "--guest" in sys.argv)

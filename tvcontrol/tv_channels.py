@@ -130,6 +130,7 @@ def focused_text(root):
 def choose_type(name):
     key("PROG_YELLOW")
     time.sleep(1)
+    keys("DPAD_UP", 12)             # the type menu does not wrap: start at the top
     for _ in range(12):
         if focused_text(dump()) == name:
             break
@@ -156,7 +157,7 @@ def pages(wrap):
         keys("PROG_RED", 20, pause=1.5)          # page up to the top
         keys("DPAD_UP", 12, pause=1.5)
     seen, idle, last_focus = set(), 0, None
-    for _ in range(60):
+    for _ in range(250):                        # a full Astra scan has ~1200 rows ≈ 130 pages
         root = dump()
         if not in_list(root):
             sys.exit("abort: list closed while walking (no further key presses)")
@@ -182,7 +183,7 @@ def pages(wrap):
         # step to the last visible row and one further, which scrolls a fresh page in
         steps = len(order) - order.index(f) if f in order else len(order)
         keys("DPAD_DOWN", steps)
-    sys.exit("abort: list end not reached within 60 pages")
+    sys.exit("abort: list end not reached within 250 pages")
 
 
 def read_list(type_name):

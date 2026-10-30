@@ -42,7 +42,23 @@ Timing (MT9676, one `uiautomator dump` ≈ 3 s): the scripts dump once per scree
 send key sequences in one `input keyevent` call — full list read ≈ 85 s, purge with
 tick + verify ≈ 2.5 min, scan ≈ 10 min.
 
+## After every channel scan: rebuild guest list (web + PDF)
+
+```bash
+# on kellertreppe (adb access to the TV); ~8 min, mostly reading the TV list
+/home/pi/tvrestore/update_guest_list.sh --mail
+SKIP_READ=1 /home/pi/tvrestore/update_guest_list.sh   # reuse the last read list
+```
+
+Chain: `tv_channels.py list` → KingOfSat Astra 19.2E page → `kos_transponders.py --guest`
+(free, German audio, country DE/AT/CH; radio rows have no country; allowlist for German-language
+foreign channels like arte; no shopping/adult/test) → `guest_selection.py` (ranked, max 50:
+32 TV + 18 radio; defaults **arte** and **ANTENNE BAYERN** shown bold) →
+`/var/lib/tvremote/channels.json` (tv.heissa.de) + `Senderliste_Gaeste.pdf` (mailed via sendmail).
+
 ## Daily restore (pseudo hotel mode)
+
+Active now: cron on kellertreppe `56 12 * * * /home/pi/tvrestore/tv_tune.sh 934` (Antenne Bayern).
 
 The TV switches itself on at 12:55 and off at 13:00 (Settings → System → Stromversorgung &
 Energie → Automatisch ein-/ausschalten). A cron job on an always-on host in the same LAN
@@ -73,6 +89,9 @@ and public IPv4 (`update_home_nets.sh`, cron every 10 min), VPN 10.8.0.0/24. Eve
 - Delete view: the **yellow** key („Auswählen") ticks a row, OK does nothing; the confirm
   dialog buttons are TextViews „Abbrechen"/„Weiter"; the delete list does not wrap.
 - An empty list type (e.g. „Verschlüsselt" after the purge) cannot be selected — treated as empty.
+- Manual transponder scan (Manuelle Satelliteneinstellung, mode „Allgemeiner Satellit"):
+  the symbol-rate EditText is not updated in `uiautomator dump` — check it by screenshot;
+  `input text` works once the field is in edit mode. A manual scan restored the full Astra list.
 - „Kanäle neu sortieren" has no criteria (it only renumbers); there is no "encrypted last" sort.
 
 - Auto on/off: the rhythm dialog always shows the title „Einschaltzeit" and once wrote the

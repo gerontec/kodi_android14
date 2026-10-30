@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Guest channel list (DE/EN) for the Sharp TV: favourites first, then all channels,
-with the Astra 19.2E transponder in the rightmost column.
+"""Guest channel list (DE/EN) for the Sharp TV, grouped TV / Radio, Astra 19.2E transponder in the
+rightmost column.
 
-usage: channel_pdf.py channels_tp.tsv out.pdf   (tsv: number<TAB>name<TAB>"freq pol SR")
+usage: channel_pdf.py selection.tsv out.pdf   (tsv from guest_selection.py)
 """
 import re
 import sys
@@ -57,11 +57,14 @@ def load(path):
     return sorted(set(rows))
 
 
-def row(c, y, num, name, tp, size=13):
+DEFAULTS = re.compile(r"^ANTENNE BAYERN$|^arte HD$")
+
+
+def row(c, y, num, name, tp, size=13, bold=False):
     w, _ = A4
-    c.setFont("Helvetica-Bold", size)
+    c.setFont("Helvetica-Bold", size + (1 if bold else 0))
     c.drawRightString(38 * mm, y, str(num))
-    c.setFont("Helvetica", size)
+    c.setFont("Helvetica-Bold" if bold else "Helvetica", size + (1 if bold else 0))
     c.drawString(44 * mm, y, name)
     c.setFont("Helvetica", size - 3)
     c.setFillGray(0.4)
@@ -70,59 +73,51 @@ def row(c, y, num, name, tp, size=13):
 
 
 def main(tsv, out):
-    rows = load(tsv)
+    """One list (max ~50 rows from guest_selection.py), grouped TV / Radio, transponder on the right."""
+    groups = {"TV": [], "Radio": []}
+    for line in open(tsv, encoding="utf-8"):
+        p = line.rstrip("\n").split("\t")
+        if len(p) >= 2 and p[0].isdigit():
+            groups["Radio" if len(p) >= 8 and p[7] == "1" else "TV"].append((int(p[0]), p[1], p[2] if len(p) > 2 else ""))
     c = canvas.Canvas(out, pagesize=A4)
     w, h = A4
 
-    # page 1: favourites
-    y = h - 22 * mm
-    c.setFont("Helvetica-Bold", 22)
-    c.drawString(18 * mm, y, "Senderliste  ·  Channel list")
-    y -= 8 * mm
-    c.setFont("Helvetica", 10.5)
-    c.drawString(18 * mm, y, "Nummer auf der Fernbedienung eintippen  ·  Type the number on the remote")
-    y -= 5 * mm
-    c.drawString(18 * mm, y, "Handy / phone (Haus-WLAN / home Wi-Fi): https://tv.heissa.de")
-    y -= 5 * mm
-    c.drawString(18 * mm, y, "Satellit / satellite: Astra 19,2° Ost (Live-TV)")
-    c.setFont("Helvetica", 8.5)
-    c.setFillGray(0.4)
-    c.drawRightString(w - 18 * mm, y, "Transponder: MHz Pol. SR")
-    c.setFillGray(0)
-    y -= 10 * mm
-    missing = []
-    for section, items in FAVOURITES:
-        hits = []
-        for label, pat in items:
-            m = next((r for r in rows if re.search(pat, r[1], re.I)), None)
-            if m:
-                hits.append((label, m))
-            else:
-                missing.append(label)
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(18 * mm, y, section)
+    def header():
+        y = h - 20 * mm
+        c.setFont("Helvetica-Bold", 20)
+        c.drawString(18 * mm, y, "Senderliste  ·  Channel list")
         y -= 7 * mm
-        if not hits:
-            c.setFont("Helvetica-Oblique", 11)
-            c.drawString(44 * mm, y, "folgt  ·  coming soon")
-            y -= 7 * mm
-        for label, (num, name, tp) in hits:
-            row(c, y, num, label + ("  (Standard / default)" if label == "Antenne Bayern" else ""), tp)
-            y -= 6.8 * mm
+        c.setFont("Helvetica", 10)
+        c.drawString(18 * mm, y, "Nummer auf der Fernbedienung eintippen  ·  Type the number on the remote")
+        y -= 4.5 * mm
+        c.drawString(18 * mm, y, "Handy / phone (Haus-WLAN / home Wi-Fi): https://tv.heissa.de  ·  Astra 19,2° Ost")
+        c.setFont("Helvetica", 8)
+        c.setFillGray(0.4)
+        c.drawRightString(w - 18 * mm, y, "Transponder: MHz Pol. SR")
+        c.setFillGray(0)
+        return y - 8 * mm
+
+    y = header()
+    line_h = 5.6 * mm
+    for section in ("TV", "Radio"):
+        rows = groups[section]
+        if not rows:
+            continue
+        if y < 30 * mm:
+            c.showPage(); y = header()
+        c.setFont("Helvetica-Bold", 13)
+        c.drawString(18 * mm, y, section)
+        y -= 6.5 * mm
+        for num, name, tp in rows:
+            if y < 15 * mm:
+                c.showPage(); y = header()
+            dflt = bool(DEFAULTS.search(name))
+            row(c, y, num, name + ("   (Standard / default)" if dflt else ""), tp, size=11, bold=dflt)
+            y -= line_h
         y -= 4 * mm
     c.showPage()
-
-    # full list, one column, transponder on the right
-    line_h, top, bottom = 5.2 * mm, h - 25 * mm, 15 * mm
-    per_page = int((top - bottom) / line_h)
-    for start in range(0, len(rows), per_page):
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(18 * mm, h - 15 * mm, "Alle Sender · All channels (Astra 19,2° E)")
-        for i, (num, name, tp) in enumerate(rows[start:start + per_page]):
-            row(c, top - i * line_h, num, name, tp, size=10.5)
-        c.showPage()
     c.save()
-    print(f"{out}: {len(rows)} channels, favourites missing: {missing or 'none'}")
+    print(f"{out}: {len(groups['TV'])} TV + {len(groups['Radio'])} radio")
 
 
 if __name__ == "__main__":
