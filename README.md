@@ -222,3 +222,10 @@ The Kodi web server must be enabled manually after first install:
 - URL: `http://192.168.178.43:8080`
 - Username: `kodi`
 - Password: `654321`
+
+---
+
+## TV control over adb (channel list, guest remote, pseudo hotel mode)
+
+See [tvcontrol/README.md](tvcontrol/README.md): scripted Astra channel list install + removal of
+encrypted channels, guest channel list PDF, phone remote `tv.heissa.de`, daily config restore.
