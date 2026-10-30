@@ -5,6 +5,9 @@ Includes channel list (German HD, Austrian, Russian, international, radio) and m
 
 ---
 
+> **Status 2026-10-30:** TVHeadend and pvr.hts are no longer used — see
+> [Guest house TV system](#guest-house-tv-system-2026-10-30) at the end.
+
 ## Step 1 — Enable Developer Mode & ADB on the TV
 
 You need to activate **USB Debugging** (network ADB) via the TV remote before running the install script.
@@ -225,7 +228,57 @@ The Kodi web server must be enabled manually after first install:
 
 ---
 
-## TV control over adb (channel list, guest remote, pseudo hotel mode)
+## Guest house TV system (2026-10-30)
 
-See [tvcontrol/README.md](tvcontrol/README.md): scripted Astra channel list install + removal of
-encrypted channels, guest channel list PDF, phone remote `tv.heissa.de`, daily config restore.
+Everything below lives in [`tvcontrol/`](tvcontrol/) — details in
+[tvcontrol/README.md](tvcontrol/README.md) (SAT, guest remote, restore) and
+[tvcontrol/iptv/README.md](tvcontrol/iptv/README.md) (IPTV, relays, family access).
+
+### Overview
+
+| Address | What guests get | Source |
+|---|---|---|
+| `tv.heissa.de` = `sat.heissa.de` | 50 free German-language channels (DE/AT/CH, no shopping), defaults **arte** (39) / **ANTENNE BAYERN** (934) | Astra 19.2°E, built-in DVB-S tuner |
+| `de.heissa.de` | FRITZ!Box cable (DVB-C via RTSP, preferred) + German IPTV | home connection |
+| `at.` `ch.` `it.heissa.de` | Austrian / Swiss / Italian IPTV | geo-blocked ones via Privado country exits on ipgate1 |
+| `us.heissa.de` | US IPTV | geo-blocked ones via the US IP of heissa |
+| `ru.heissa.de` | Russian IPTV, names in Latin script | all via the US IP of heissa (EU blocks some channels) |
+| `https://tv.heissa.de/tv_all.pdf` | printable list, one section per address | rebuilt daily |
+
+Every page is a phone-friendly Bootstrap list with search. **▶ Browser** plays the stream on the phone or
+laptop (hls.js), **TV** plays it on the Sharp (Kodi JSON-RPC, home/VPN only). Players work too:
+`mpv https://ru.heissa.de/list.m3u`.
+
+### SAT (built-in tuner)
+- Scripted channel list over adb, screen-driven (uiautomator + key events, every step checks the screen):
+  `tv_channel_init.py` (rescan, Astra „Österreichliste"), `tv_channels.py list / purge-encrypted`
+  (page-wise, list ≈ 85 s, purge ≈ 2.5 min), manual transponder scan for Antenne Bayern (12148 H 27500).
+- `update_guest_list.sh`: TV list → KingOfSat data → free German-language filter → top 50 → web + PDF.
+- Daily 12:56: TV switches itself on at 12:55, cron tunes Antenne Bayern (`tv_tune.sh 934`).
+
+### IPTV (Kodi `pvr.iptvsimple`, no channel manager)
+- TVHeadend removed; Kodi reads one M3U (`http://192.168.178.218:8090/m3u/de/all.m3u`), ~500 TV + 106 radio.
+- `make_country_m3u.py`: per-country lists; cable channels win over internet copies; shopping, adult,
+  placeholders and dead public-broadcaster SD entries removed.
+- `hls_relay.py`: country HLS relay (token in the path, rewrites playlists, serves one variant ≤ 5 Mbit/s so
+  Kodi opens in time). ipgate1 `10.9.0.1:18099` (CH/AT via Privado), heissa `127.0.0.1:18099` (US/RU).
+- Apache front cache on heissa: N viewers of one channel → one download from the source (`X-Cache: HIT`).
+- Daily 04:30 `iptv_daily.sh`: every channel streamed up to 60 s with ffmpeg; nothing arrives → removed from
+  lists, frontend and PDF (first run: 375 alive, 241 dead). heissa pulls the lists at 05:30.
+
+### Access and protection
+- Home LAN / home IPv6 prefix / VPN: no login. Family worldwide: user `family` + 6-digit PIN
+  (Apache Basic Auth); 3 wrong PINs → 10 min ban (fail2ban `iptv-auth`).
+- More than 9 foreign IPs streaming within 15 min → every further IP banned for a day + mail
+  (`iptv_share_guard.py`, fail2ban `iptv-share`).
+- Lists carry the relay token and are never public; tokens and PIN are not in this repo.
+
+### Capacity (measured)
+heissa 600 Mbit/s → ~50 parallel relay streams (US/RU); Privado tunnel ~50 Mbit/s per country → ~10
+different CH/AT channels at a time (same channel for many viewers costs one stream thanks to the cache).
+
+### TV basics (Sharp 4K UHDTV, Android 14, MediaTek MT9676)
+- ADB over LAN `192.168.178.195:5555` and OpenVPN `10.8.0.13:5555` (OpenVPN for Android, always-on);
+  port 5555 is lost after a power cut → once `adb tcpip 5555` over USB.
+- Auto power on 12:55 / off 13:00 (pseudo hotel mode window). Pitfalls of the firmware menus:
+  see tvcontrol/README.md.
