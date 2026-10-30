@@ -17,12 +17,32 @@ import urllib.request
 from collections import defaultdict
 
 RELAYS = {"ch", "at", "us"}          # countries with a working exit (it: no Privado tunnel yet)
-LISTS = ["de", "at", "ch", "it", "us"]
-NAMES = {"de": "Deutschland", "at": "Österreich", "ch": "Schweiz", "it": "Italia", "us": "USA"}
+LISTS = ["de", "at", "ch", "it", "us", "ru"]
+# ru: every channel via the US relay on heissa (EU blocks some Russian channels); the list is what plays
+# from the US (probe_m3u.py run on heissa -> --ru-alive)
+NAMES = {"de": "Deutschland", "at": "Österreich", "ch": "Schweiz", "it": "Italia", "us": "USA",
+         "ru": "Russia"}
+
+# Cyrillic -> Latin (BGN/PCGN-like) so guests can read the channel names
+CYR = dict(zip("абвгдеёжзийклмнопрстуфхцчшщъыьэюяіїєґ",
+               ["a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s",
+                "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "", "y", "", "e", "yu", "ya", "i", "yi", "ye", "g"]))
+
+
+def latin(text):
+    out = []
+    for ch in text:
+        low = ch.lower()
+        if low in CYR:
+            t = CYR[low]
+            out.append(t.capitalize() if ch != low and t else t)
+        else:
+            out.append(ch)
+    return "".join(out)
 FRITZBOX = {"tvhd": "Kabel HD", "tvsd": "Kabel SD", "radio": "Kabel Radio"}
 # shopping, adult and placeholder entries never go into a list
 JUNK_NAME = re.compile(r"^\W*$|\b(QVC\w*|HSE\w*|Juwelo|1-2-3\.tv|Channel ?21|sonnenklar|Shop ?LC|Mediashop|"
-                       r"Astro ?TV|Sex\w*|Erotik\w*|Babestation\w*|Teleshopping)\b", re.I)
+                       r"Astro ?TV|Sex\w*|Erotik\w*|Babestation\w*|Teleshopping|Shopping)\b", re.I)
 JUNK_GROUP = re.compile(r"shop|adult|erotic|xxx", re.I)
 
 
@@ -84,7 +104,7 @@ def regroup(info, group):
     info = info.replace("#EXTINF:-1", '#EXTINF:-1 group-title="%s"' % group, 1)
     head, _, name = info.rpartition(",")
     name = re.sub(r"\s*\[(Geo-blocked|Not 24/7)\]", "", name, flags=re.I).strip()
-    return head + "," + name
+    return head + "," + latin(name)
 
 
 def b64(url):
@@ -97,6 +117,7 @@ def main():
     ap.add_argument("--token-file", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--fritzbox", default="http://192.168.178.1", help="cable tuner base URL, '' to skip")
+    ap.add_argument("--ru-alive", help="probe result (OK<TAB>name<TAB>why<TAB>url) of raw_ru.m3u from the US")
     a = ap.parse_args()
     token = open(a.token_file).read().strip()
     lists, seen = defaultdict(list), set()
@@ -109,6 +130,8 @@ def main():
             continue
         if cc in ("de", "at", "ch") and plain(info) in on_cable:
             continue                    # the cable tuner carries it: no internet copy
+        if cc == "ru" and a.ru_alive:
+            continue                    # Russian list comes from the US probe below
         if cc in LISTS and url not in seen:
             seen.add(url)
             lists[cc].append((regroup(info, NAMES[cc]), url))
@@ -122,6 +145,15 @@ def main():
                 seen.add(url)
                 relay = f"https://{cc}.heissa.de/{token}/{b64(url)}.m3u8"
                 lists[cc].append((regroup(info, NAMES[cc] + " (geo)"), relay))
+
+    if a.ru_alive:
+        alive = {l.rstrip("\n").split("\t")[3] for l in open(a.ru_alive, encoding="utf-8")
+                 if l.startswith("OK\t")}
+        for info, url in entries(os.path.join(a.iptv, "raw_ru.m3u")):
+            if url in alive and url not in seen and not junk(info):
+                seen.add(url)
+                relay = f"https://ru.heissa.de/{token}/{b64(url)}{'.m3u8' if '.m3u8' in url else ''}"
+                lists["ru"].append((regroup(info, NAMES["ru"]), relay))
 
     def write(f, items, sort=True):
         for info, url in (sorted(items, key=lambda e: e[0].rpartition(",")[2].lower()) if sort else items):

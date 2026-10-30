@@ -9,6 +9,7 @@ TVHeadend was removed (2026-10-30). Kodi on the TV reads one M3U and plays strea
 | `at/ch.heissa.de` | Austrian / Swiss IPTV | geo-blocked ones via relay on ipgate1 (Privado exits 1043/1041) |
 | `it.heissa.de` | Italian IPTV | direct (no Italian exit yet) |
 | `us.heissa.de` | US IPTV | geo-blocked ones via relay on heissa (US IP) |
+| `ru.heissa.de` | Russian IPTV, names transliterated to Latin | **all** via relay on heissa (US IP): EU blocks some Russian channels; list = what plays from the US (`probe_m3u.py raw_ru.m3u` run on heissa → `--ru-alive`) |
 
 - `make_country_m3u.py` (kellertreppe): alive IPTV list + FRITZ!Box `/dvb/m3u/{tvhd,tvsd,radio}.m3u`
   → `<cc>/list.m3u` + `de/all.m3u`; drops shopping/adult/placeholders and the dead public-broadcaster
