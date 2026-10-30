@@ -107,7 +107,8 @@ class Relay(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "application/vnd.apple.mpegurl")
             self.send_header("Content-Length", str(len(data)))
-            self.send_header("Cache-Control", "no-cache")
+            # live playlists change every few seconds: a front cache may reuse them briefly
+            self.send_header("Cache-Control", "public, max-age=2")
             self.end_headers()
             self.wfile.write(data)
             return
@@ -115,6 +116,9 @@ class Relay(BaseHTTPRequestHandler):
         ctype = {".ts": "video/mp2t", ".aac": "audio/aac", ".mp4": "video/mp4", ".m4s": "video/iso.segment",
                  ".vtt": "text/vtt"}.get(ext_of(url), "application/octet-stream")
         self.send_header("Content-Type", ctype)
+        # segments never change: the Apache cache on heissa serves repeats, so N viewers of one
+        # channel cost the source (and the Privado tunnel) one download
+        self.send_header("Cache-Control", "public, max-age=60")
         self.end_headers()
         try:
             while head:

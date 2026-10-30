@@ -36,10 +36,18 @@ TVHeadend was removed (2026-10-30). Kodi on the TV reads one M3U and plays strea
 ## Family access worldwide
 
 - Start pages and lists: home connection / VPN without login, everyone else with one shared password
-  (Apache Basic Auth, user `family`, `/etc/apache2/iptv-family.htpasswd`, `htpasswd -B` to change it).
+  (Apache Basic Auth, user `family`, 6-digit PIN, `/etc/apache2/iptv-family.htpasswd`, `htpasswd -B` to change it).
+  fail2ban jail `iptv-auth` (filter apache-auth): 3 wrong logins within 10 min → 10 min ban.
   Logged-in family members can watch in the browser or any player, but the **TV** button (Kodi on the Sharp)
   stays home/VPN only (`lib.php` `require_allowed(true)` + `allowed()`).
 - `iptv_share_guard.py` (heissa, root cron every minute): more than 9 distinct foreign IPs streaming within
   15 min → every further IP is banned for 1 day via fail2ban jail `iptv-share` (+ mail).
 - Capacity (measured 2026-10-30): heissa 600 Mbit/s → ~50 parallel streams (us/ru, max 5 Mbit/s each);
   Privado tunnel on ipgate1 ~50 Mbit/s per country → ~9-10 parallel ch/at streams.
+
+## Front cache (one download per channel)
+
+The relay sends `Cache-Control: max-age=60` for segments and `max-age=2` for playlists; Apache on heissa
+caches the stream paths (`CacheEnable disk` + `CacheLock`, htcacheclean 2 GB). N viewers of one channel cost
+the source / Privado tunnel one download (checked: second request `X-Cache: HIT`, 8.4 s → 2.7 s).
+Real multicast is not possible over the internet; the FRITZ!Box serves cable TV unicast (RTSP) only.
