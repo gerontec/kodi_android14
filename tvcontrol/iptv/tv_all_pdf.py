@@ -23,6 +23,7 @@ SECTIONS = [
     ("ru", "ru.heissa.de", "Russia · IPTV via US exit (no EU blocking)  (Kodi)"),
 ]
 W, H = A4
+PROJECT = "https://github.com/gerontec/kodi_android14"
 
 
 def m3u(path):
@@ -39,6 +40,13 @@ def m3u(path):
 
 
 def page_header(c, host, title, cont=False):
+    # project link top right on every page (clickable in the PDF)
+    c.setFont("Helvetica", 8)
+    c.setFillColorRGB(0.1, 0.3, 0.7)
+    c.drawRightString(W - 15 * mm, H - 10 * mm, PROJECT)
+    tw = c.stringWidth(PROJECT, "Helvetica", 8)
+    c.linkURL(PROJECT, (W - 15 * mm - tw, H - 11 * mm, W - 15 * mm, H - 7.5 * mm), relative=0)
+    c.setFillColorRGB(0, 0, 0)
     c.setFont("Helvetica-Bold", 18)
     c.drawString(15 * mm, H - 18 * mm, host + ("  (Forts.)" if cont else ""))
     c.setFont("Helvetica", 10)
