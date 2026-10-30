@@ -6,6 +6,8 @@ $ip = require_allowed();
 
 // list per country: ?cc=de|at|ch|it|us|ru  (/var/lib/tvremote/iptv_<cc>.m3u)
 $cc = preg_match('/^(de|at|ch|it|us|ru)$/', $_GET['cc'] ?? 'de') ? ($_GET['cc'] ?? 'de') : 'de';
+$titles = ['de' => 'Kabel & IPTV Deutschland', 'at' => 'Österreich · IPTV', 'ch' => 'Schweiz · IPTV',
+           'it' => 'Italia · IPTV', 'us' => 'USA · IPTV', 'ru' => 'Russia · IPTV (via US)'];
 $items = [];
 $name = null; $group = '';
 foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
@@ -13,7 +15,7 @@ foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
         $name = trim(substr($line, strrpos($line, ',') + 1));
         $group = preg_match('/group-title="([^"]*)"/', $line, $m) ? $m[1] : '';
     } elseif ($line !== '' && $line[0] !== '#' && $name !== null) {
-        $items[] = ['name' => $name, 'group' => $group];
+        $items[] = ['name' => $name, 'group' => $group, 'url' => $line];
         $name = null;
     }
 }
@@ -34,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['i'])) {
 }
 
 $groups = [];
-foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name']];
+foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url']];
 ?>
 <!doctype html>
 <html lang="de" data-bs-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kabel &amp; IPTV</title>
+<title><?= htmlspecialchars($titles[$cc]) ?></title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script>
   if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.dataset.bsTheme = 'dark';
@@ -56,7 +58,8 @@ foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name']];
 </head>
 <body>
 <header class="border-bottom bg-body p-3 pb-2">
-  <h1 class="h5 mb-2">Kabel &amp; IPTV · Cable &amp; IPTV <small class="text-body-secondary">(Kodi)</small></h1>
+  <a class="btn btn-sm btn-outline-secondary float-end" href="https://tv.heissa.de/tv_all.pdf" target="_blank">PDF</a>
+  <h1 class="h5 mb-2"><?= htmlspecialchars($titles[$cc]) ?></h1>
   <select id="g" class="form-select mb-2">
     <option value="">Alle Gruppen · all groups</option>
     <?php foreach (array_keys($groups) as $g): ?>
@@ -66,14 +69,21 @@ foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name']];
   <input type="search" id="q" class="form-control form-control-lg" placeholder="Suchen · search"
          autocomplete="off" enterkeyhint="search">
 </header>
+<div id="player" class="d-none bg-black"><video id="v" controls playsinline class="w-100" style="max-height:45vh"></video></div>
 <main id="list" class="px-2 px-sm-3 pb-5">
 <?php foreach ($groups as $g => $list): ?>
   <section data-group="<?= htmlspecialchars($g) ?>">
   <h2 class="h6 text-uppercase text-body-secondary mt-3 mb-2 ms-1"><?= htmlspecialchars($g) ?></h2>
   <div class="list-group">
-  <?php foreach ($list as [$i, $n]): ?>
-    <button type="button" class="ch list-group-item list-group-item-action" value="<?= $i ?>"
-      data-n="<?= htmlspecialchars(strtolower($n)) ?>"><?= htmlspecialchars($n) ?></button>
+  <?php foreach ($list as [$i, $n, $u]): ?>
+    <div class="ch list-group-item d-flex align-items-center gap-2" data-i="<?= $i ?>"
+      data-n="<?= htmlspecialchars(strtolower($n)) ?>">
+      <span class="name flex-grow-1"><?= htmlspecialchars($n) ?></span>
+      <?php if (preg_match('#^https?://#', $u)): ?>
+        <button type="button" class="btn btn-sm btn-primary web" data-url="<?= htmlspecialchars($u) ?>">▶ Browser</button>
+      <?php endif; ?>
+      <button type="button" class="btn btn-sm btn-outline-secondary tv">TV</button>
+    </div>
   <?php endforeach; ?>
   </div>
   </section>
@@ -85,6 +95,7 @@ foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name']];
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
 <script>
 const toastEl = document.getElementById('toast'), toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
 const q = document.getElementById('q'), g = document.getElementById('g');
@@ -98,16 +109,35 @@ function filter() {
 }
 q.addEventListener('input', filter);
 g.addEventListener('change', () => { filter(); document.getElementById('list').scrollTop = 0; });
-document.querySelectorAll('.ch').forEach(b => b.addEventListener('click', async () => {
-  if (b.classList.contains('busy')) return;
-  b.classList.add('busy'); show('… ' + b.textContent);
+// "TV": play in Kodi on the Sharp
+document.querySelectorAll('.ch .tv').forEach(b => b.addEventListener('click', async () => {
+  const row = b.closest('.ch');
+  if (b.disabled) return;
+  b.disabled = true; show('… ' + row.querySelector('.name').textContent);
   try {
-    const r = await fetch(location.pathname + location.search, { method: 'POST', body: new URLSearchParams({ i: b.value }) });
+    const r = await fetch(location.pathname + location.search, { method: 'POST', body: new URLSearchParams({ i: row.dataset.i }) });
     const j = await r.json();
-    if (j.ok) document.querySelectorAll('.ch').forEach(x => x.classList.toggle('active', x.value === String(j.i)));
+    if (j.ok) document.querySelectorAll('.ch').forEach(x => x.classList.toggle('active', x.dataset.i === String(j.i)));
     show(j.msg);
   } catch (e) { show('Fehler · error'); }
-  b.classList.remove('busy');
+  b.disabled = false;
+}));
+// "Browser": play here (HLS via hls.js, Safari natively)
+let hls = null;
+const video = document.getElementById('v'), player = document.getElementById('player');
+document.querySelectorAll('.ch .web').forEach(b => b.addEventListener('click', () => {
+  const url = b.dataset.url, name = b.closest('.ch').querySelector('.name').textContent;
+  player.classList.remove('d-none');
+  if (hls) { hls.destroy(); hls = null; }
+  if (window.Hls && Hls.isSupported()) {
+    hls = new Hls({ maxBufferLength: 20 });
+    hls.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) show('Stream-Fehler · stream error'); });
+    hls.loadSource(url); hls.attachMedia(video);
+  } else {
+    video.src = url;
+  }
+  video.play().catch(() => {});
+  show('▶ ' + name);
 }));
 </script>
 </body>

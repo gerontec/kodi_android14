@@ -22,3 +22,13 @@ TVHeadend was removed (2026-10-30). Kodi on the TV reads one M3U and plays strea
 - `tv_all_pdf.py`: `tv_all.pdf`, one section per subdomain (sat numbers, Kodi channel numbers).
 - Install iptvsimple without the GUI: Kodi EventServer builtin `InstallAddon(pvr.iptvsimple)`, confirm with
   JSON-RPC `Input.Left` + `Input.Select`.
+
+## Daily check and publishing
+
+- `iptv_daily.sh` (kellertreppe, cron 04:30): candidate lists → `stream_check.py` streams every channel with
+  ffmpeg up to 60 s (alive at 512 KB, dead below 64 KB; cable max 2 parallel) → `dead.txt` →
+  lists rebuilt with `--dead` → frontend lists, `tv_all.pdf` (also at https://tv.heissa.de/tv_all.pdf).
+- `iptv_pull.sh` (heissa, cron 05:30): pulls the checked lists from http://10.8.0.6:8090/m3u/ over the VPN.
+- `https://<cc>.heissa.de/` = channel list with **▶ Browser** (hls.js, plays on the phone/laptop) and
+  **TV** (plays in Kodi on the Sharp); other paths go to the relay. Any player works too:
+  `mpv https://ru.heissa.de/list.m3u`.

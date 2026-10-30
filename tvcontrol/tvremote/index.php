@@ -56,6 +56,7 @@ foreach ($channels as $c) $groups[$c['radio'] ? 'Radio' : 'TV'][] = $c;
 </head>
 <body>
 <header class="border-bottom bg-body p-3 pb-2">
+  <a class="btn btn-sm btn-outline-secondary float-end" href="https://tv.heissa.de/tv_all.pdf" target="_blank">PDF</a>
   <h1 class="h5 mb-2">Senderwahl · Channels</h1>
   <ul class="nav nav-pills nav-fill mb-2">
     <li class="nav-item"><button type="button" class="nav-link active" data-tab="TV">TV</button></li>

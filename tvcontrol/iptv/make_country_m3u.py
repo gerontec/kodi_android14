@@ -118,10 +118,13 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--fritzbox", default="http://192.168.178.1", help="cable tuner base URL, '' to skip")
     ap.add_argument("--ru-alive", help="probe result (OK<TAB>name<TAB>why<TAB>url) of raw_ru.m3u from the US")
+    ap.add_argument("--dead", help="source URLs that delivered nothing in the daily 60 s check (stream_check.py)")
     a = ap.parse_args()
     token = open(a.token_file).read().strip()
     lists, seen = defaultdict(list), set()
-    cable = fritzbox(a.fritzbox) if a.fritzbox else []
+    dead = set(open(a.dead, encoding="utf-8").read().split()) if a.dead else set()
+    seen |= dead                        # a dead source URL is treated as already used: never listed
+    cable = [c for c in (fritzbox(a.fritzbox) if a.fritzbox else []) if c[1] not in dead]
     on_cable = {plain(i) for i, _ in cable}
 
     for info, url in entries(os.path.join(a.iptv, "working.m3u")):
