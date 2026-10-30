@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>demo TV · Newsmax 2</title>
+<meta name="description" content="Demo of the guest house TV system: a free US news channel, streamed straight from the broadcaster's CDN.">
+<style>
+  :root { --bg:#0e0e10; --fg:#eaeaea; --muted:#9a9aa2; --acc:#4da3ff; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg:#f5f5f2; --fg:#1c1c1c; --muted:#5d5d63; --acc:#0b66c3; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.45 system-ui, sans-serif; }
+  main { max-width:1100px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:4px 0 12px; }
+  video { width:100%; aspect-ratio:16/9; background:#000; border-radius:10px; }
+  p { color:var(--muted); font-size:14px; margin:10px 0; }
+  a { color:var(--acc); }
+  #state { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Newsmax 2 <span id="state">· loading…</span></h1>
+  <video id="v" controls playsinline muted autoplay></video>
+  <p>Demo of a guest house TV system: this page only delivers the player - the video comes straight from the
+     broadcaster's official free stream (CDN), so any number of viewers is fine. Tap ▶ / unmute to listen.</p>
+  <p>How the full system works: <a href="https://github.com/gerontec/kodi_android14/blob/master/docs/vps_federation.pdf">vps_federation.pdf</a>
+     · project: <a href="https://github.com/gerontec/kodi_android14">github.com/gerontec/kodi_android14</a></p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+<script>
+  // official free channel, played directly from the broadcaster's CDN (CORS allows embedding)
+  const SRC = "https://amg00217-newsmax-newsmax-zeasn-022k9.amagi.tv/playlist.m3u8";
+  const v = document.getElementById('v'), state = document.getElementById('state');
+  function ok() { state.textContent = '· live'; }
+  function fail() { state.textContent = '· stream not available right now'; }
+  if (window.Hls && Hls.isSupported()) {
+    const hls = new Hls({ maxBufferLength: 20 });
+    hls.on(Hls.Events.MANIFEST_PARSED, ok);
+    hls.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) fail(); });
+    hls.loadSource(SRC); hls.attachMedia(v);
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = SRC; v.addEventListener('loadedmetadata', ok); v.addEventListener('error', fail);
+  } else { fail(); }
+  v.play().catch(() => {});
+</script>
+</body>
+</html>

@@ -248,6 +248,7 @@ Architecture for other guest houses: [docs/vps_federation.pdf](docs/vps_federati
 | `us.heissa.de` | US IPTV | geo-blocked ones via the US IP of heissa |
 | `fr.heissa.de` | French IPTV | all via ipgate1 directly (French IP) |
 | `ru.heissa.de` | Russian IPTV, names in Latin script | all via the US IP of heissa (EU blocks some channels) |
+| `demotv.heissa.de` | public demo for everyone: Newsmax 2, played straight from the broadcaster's official CDN (no relay, no login, any number of viewers) | broadcaster CDN |
 | `https://tv.heissa.de/tv_all.pdf` | printable list, one section per address | rebuilt daily |
 
 Every page is a phone-friendly Bootstrap list with search. **▶ Browser** plays the stream on the phone or
