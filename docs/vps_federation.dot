@@ -1,0 +1,78 @@
+// VPS federation for a guest house TV: every server covers the geo-blocks of its own region.
+// Render: dot -Tpdf vps_federation.dot -o vps_federation.pdf
+digraph vps_federation {
+    graph [rankdir=LR, fontname="Helvetica", fontsize=11, nodesep=0.35, ranksep=0.9, pad=0.3,
+           label=<<b>VPS federation for a guest house TV</b><br/><font point-size="10">each server covers the geo-blocks of its region · one upstream stream per channel · guests choose on their phone</font>>,
+           labelloc=t, labeljust=l];
+    node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#ffffff", color="#555555"];
+    edge  [fontname="Helvetica", fontsize=8.5, color="#555555"];
+
+    // ---------------------------------------------------------------- guest house
+    subgraph cluster_house {
+        label=<<b>Guest house</b> (home LAN)>; style="rounded,filled"; fillcolor="#eef5ee"; color="#7a9f7a";
+        phone   [label="Guest phones / laptops\nchannel list, ▶ browser\nor ▶ on the TV", fillcolor="#ffffff"];
+        tv      [label="Android TV (Kodi)\nIPTV Simple Client\n+ built-in SAT tuner", fillcolor="#fff7e0"];
+        dish    [label="SAT dish\nAstra 19.2°E", shape=ellipse, fillcolor="#fff7e0"];
+        cable   [label="Cable router\n(DVB-C tuner, RTSP)", fillcolor="#fff7e0"];
+        lanhost [label=<<b>LAN host</b> (Raspberry Pi)<br/><font point-size="9">channel lists per country<br/>daily 60 s stream check<br/>phone frontend · PDF<br/>adb / Kodi JSON-RPC to the TV</font>>, fillcolor="#e6f0ff"];
+    }
+
+    // ---------------------------------------------------------------- servers
+    subgraph cluster_us {
+        label=<<b>VPS USA</b>>; style="rounded,filled"; fillcolor="#f2ecfa"; color="#9a86c0";
+        us_front [label=<<b>Public front</b><br/><font point-size="9">sat. de. at. ch. fr. us. ru. &lt;domain&gt;<br/>TLS · login (shared PIN)<br/>fail2ban: 3 wrong PINs, &gt;9 foreign IPs<br/>front cache</font>>, fillcolor="#ffffff"];
+        us_relay [label=<<b>HLS relay</b> · exit USA<br/><font point-size="9">US channels<br/>Russian channels (avoids EU blocks)</font>>, fillcolor="#ffffff"];
+    }
+
+    subgraph cluster_eu {
+        label=<<b>VPS Europe</b>>; style="rounded,filled"; fillcolor="#fdeeee"; color="#c08686";
+        eu_relay [label=<<b>HLS relay</b><br/><font point-size="9">one download per channel<br/>shared by all viewers</font>>, fillcolor="#ffffff"];
+        eu_fr    [label="exit France\n(server's own IP)", shape=note, fillcolor="#ffffff"];
+        eu_ch    [label="exit Switzerland\n(VPN provider tunnel)", shape=note, fillcolor="#ffffff"];
+        eu_at    [label="exit Austria\n(VPN provider tunnel)", shape=note, fillcolor="#ffffff"];
+    }
+
+    // ---------------------------------------------------------------- sources
+    subgraph cluster_src {
+        label=<<b>Stream sources</b>>; style="rounded,filled"; fillcolor="#f4f4f4"; color="#999999";
+        src_free [label="free streams\n(play from home directly)", shape=cylinder, fillcolor="#ffffff"];
+        src_us   [label="US / RU streams\n(geo-blocked in the EU)", shape=cylinder, fillcolor="#ffffff"];
+        src_eu   [label="FR / CH / AT streams\n(geo-blocked abroad)", shape=cylinder, fillcolor="#ffffff"];
+    }
+
+    family [label="Family abroad\n(browser / any player,\nshared PIN)", shape=box, fillcolor="#fffbe6"];
+
+    // ---------------------------------------------------------------- flows
+    dish    -> tv       [label="Live TV", color="#c79a2a"];
+    cable   -> tv       [label="RTSP (LAN only)", color="#c79a2a"];
+    lanhost -> tv       [label="tune channel\nKodi playlist", style=dashed];
+    phone   -> lanhost  [label="choose channel", style=dashed];
+    phone   -> us_front [label="list / browser\n(via internet)", style=dashed];
+    family  -> us_front [label="PIN login"];
+
+    tv      -> src_free [label="direct"];
+    tv      -> us_front [label="geo-blocked\nchannels"];
+    us_front -> us_relay [label="/us /ru"];
+    us_front -> eu_relay [label="/fr /ch /at\nWireGuard"];
+    lanhost -> us_front [label="checked lists\n(VPN)", style=dashed];
+
+    us_relay -> src_us [label="US IP"];
+    eu_relay -> eu_fr;
+    eu_relay -> eu_ch;
+    eu_relay -> eu_at;
+    eu_fr   -> src_eu;
+    eu_ch   -> src_eu;
+    eu_at   -> src_eu;
+
+    // ---------------------------------------------------------------- legend
+    legend [shape=plaintext, fillcolor="none", label=<
+      <table border="0" cellborder="0" cellspacing="2" cellpadding="1">
+        <tr><td align="left"><b>How it works</b></td></tr>
+        <tr><td align="left">1. The LAN host builds one channel list per country and checks every stream daily.</td></tr>
+        <tr><td align="left">2. Free and cable channels play directly at home - no server involved.</td></tr>
+        <tr><td align="left">3. Geo-blocked channels go to the relay whose exit sits in the right country.</td></tr>
+        <tr><td align="left">4. The relay downloads each segment once and shares it with every viewer.</td></tr>
+        <tr><td align="left">5. Add a region = add a VPS (or VPN exit) + one relay route.</td></tr>
+        <tr><td align="left"><font point-size="8">Note: public performance / geo rights - check licensing before commercial use.</font></td></tr>
+      </table>>];
+}

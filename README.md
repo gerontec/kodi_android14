@@ -236,6 +236,10 @@ Everything below lives in [`tvcontrol/`](tvcontrol/) — details in
 
 ### Overview
 
+Architecture for other guest houses: [docs/vps_federation.pdf](docs/vps_federation.pdf)
+(Graphviz source `docs/vps_federation.dot`) — each VPS covers the geo-blocks of its region.
+
+
 | Address | What guests get | Source |
 |---|---|---|
 | `tv.heissa.de` = `sat.heissa.de` | 50 free German-language channels (DE/AT/CH, no shopping), defaults **arte** (39) / **ANTENNE BAYERN** (934) | Astra 19.2°E, built-in DVB-S tuner |
