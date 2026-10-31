@@ -109,6 +109,10 @@ function now_prog(array $epg, string $id): ?array {
           <?php if ($now[1] !== ''): ?><br><span class="fst-italic">EN: <?= htmlspecialchars($now[1]) ?></span><?php endif; ?></small><?php endif; ?></span>
       <?php if (preg_match('#^https?://#', $u)): ?>
         <button type="button" class="btn btn-sm btn-primary web" data-url="<?= htmlspecialchars($u) ?>">▶ Browser</button>
+      <?php elseif ($can_tv && $cc === 'de' && str_starts_with($u, 'rtsp://')): ?>
+        <!-- cable: converted to HLS on kellertreppe (cable.php); VLC plays the RTSP URL directly -->
+        <button type="button" class="btn btn-sm btn-primary web" data-url="cable/<?= $i ?>/index.m3u8">▶ Browser</button>
+        <a class="btn btn-sm btn-outline-secondary" href="<?= htmlspecialchars($u) ?>">VLC</a>
       <?php endif; ?>
       <?php if ($can_tv): ?><button type="button" class="btn btn-sm btn-outline-secondary tv">TV</button><?php endif; ?>
     </div>
