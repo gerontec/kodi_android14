@@ -44,19 +44,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['i'])) {
 
 $groups = [];
 foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url'], $c['id']];
-// now/next from the daily EPG build (epg_merge.py): {tvg-id: [[start, stop, title], ...]}
+// guide from the daily EPG build (epg_merge.py): {tvg-id: [[start, stop, title, meta], ...]}, max 36 h ahead
 $epg_all = json_decode(@file_get_contents(DATA . '/epg_now.json') ?: '{}', true) ?: [];
 // English translations of Cyrillic titles (dell, NLLB, epg_titles_translate.py): {original: english}
 $tr = json_decode(@file_get_contents(DATA . '/epg_titles_en.json') ?: '{}', true) ?: [];
+// per channel only the running programme: [start, stop, title, english, meta]
 $epg = [];
 foreach ($items as $c) {
     if ($c['id'] === '' || !isset($epg_all[$c['id']])) continue;
-    $epg[$c['id']] = array_map(fn($p) => [$p[0], $p[1], $p[2], $tr[$p[2]] ?? ''], $epg_all[$c['id']]);
+    foreach ($epg_all[$c['id']] as $p) {
+        if ($p[0] <= time() && time() < $p[1]) {
+            $epg[$c['id']] = [[$p[0], $p[1], $p[2], $tr[$p[2]] ?? '', (object)($p[3] ?? [])]];
+            break;
+        }
+    }
 }
-// [title, english or '', until]
+// [title, english or '', until, meta]
 function now_prog(array $epg, string $id): ?array {
-    foreach ($epg[$id] ?? [] as [$a, $b, $t, $en]) if ($a <= time() && time() < $b) return [$t, $en, date('H:i', $b)];
+    foreach ($epg[$id] ?? [] as [$a, $b, $t, $en, $m]) if ($a <= time() && time() < $b) return [$t, $en, date('H:i', $b), (array)$m];
     return null;
+}
+// "2024 · Thriller · S01E02 · M/16"
+function meta_line(array $m): string {
+    return implode(' · ', array_filter([$m['y'] ?? '', $m['g'] ?? '', $m['e'] ?? '', $m['r'] ?? '']));
 }
 ?>
 <!doctype html>
@@ -96,6 +106,10 @@ function now_prog(array $epg, string $id): ?array {
        style="background:rgba(0,0,0,.55); pointer-events:none"></div>
   <button id="cc" type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 d-none">CC</button>
 </div>
+<div id="pinfo" class="d-none d-flex gap-2 px-2 py-2 small border-bottom">
+  <img id="pimg" alt="" referrerpolicy="no-referrer" class="rounded d-none" style="width:80px;height:auto;object-fit:cover">
+  <div><strong id="ptitle"></strong> <span id="pmeta" class="text-body-secondary"></span><br><span id="pdesc"></span></div>
+</div>
 <main id="list" class="px-2 px-sm-3 pb-5">
 <?php foreach ($groups as $g => $list): ?>
   <section data-group="<?= htmlspecialchars($g) ?>">
@@ -106,7 +120,18 @@ function now_prog(array $epg, string $id): ?array {
       data-n="<?= htmlspecialchars(strtolower($n . ' ' . ($now ? $now[0] . ' ' . $now[1] : ''))) ?>">
       <span class="name flex-grow-1"><?= htmlspecialchars($n) ?>
         <?php if ($now): ?><br><small class="now text-body-secondary">▸ <?= htmlspecialchars($now[0]) ?> · bis <?= $now[2] ?>
-          <?php if ($now[1] !== ''): ?><br><span class="fst-italic">EN: <?= htmlspecialchars($now[1]) ?></span><?php endif; ?></small><?php endif; ?></span>
+          <?php if ($now[1] !== ''): ?><br><span class="fst-italic">EN: <?= htmlspecialchars($now[1]) ?></span><?php endif; ?>
+          <?php if (($ml = meta_line($now[3])) !== ''): ?><br><?= htmlspecialchars($ml) ?><?php endif; ?></small>
+          <?php if (!empty($now[3]['d']) || !empty($now[3]['i']) || !empty($now[3]['s'])): ?>
+          <details class="small mt-1"><summary class="text-primary">Info</summary>
+            <div class="d-flex gap-2 mt-1">
+              <?php if (!empty($now[3]['i'])): ?><img src="<?= htmlspecialchars(preg_replace('#^http://#', 'https://', $now[3]['i'])) ?>" alt=""
+                loading="lazy" referrerpolicy="no-referrer" style="width:72px;height:auto;object-fit:cover" class="rounded" onerror="this.remove()"><?php endif; ?>
+              <div><?php if (!empty($now[3]['s'])): ?><strong><?= htmlspecialchars($now[3]['s']) ?></strong><br><?php endif; ?>
+                <?= htmlspecialchars($now[3]['d'] ?? '') ?></div>
+            </div>
+          </details>
+          <?php endif; ?><?php endif; ?></span>
       <?php if (preg_match('#^https?://#', $u)): ?>
         <button type="button" class="btn btn-sm btn-primary web" data-url="<?= htmlspecialchars($u) ?>">▶ Browser</button>
       <?php elseif ($can_tv && $cc === 'de' && str_starts_with($u, 'rtsp://')): ?>
@@ -163,10 +188,18 @@ const epgline = document.getElementById('epgline'), ccBtn = document.getElementB
 const hhmm = t => new Date(t * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 function showEpg() {
   const list = EPG[playingId] || [], now = Date.now() / 1000;
-  const cur = list.find(p => p[0] <= now && now < p[1]), next = list.find(p => p[0] >= now);
+  const cur = list.find(p => p[0] <= now && now < p[1]);
   const t = p => p[2] + (p[3] ? ` (EN: ${p[3]})` : '');
-  epgline.textContent = cur ? `Jetzt · now: ${t(cur)} · bis ${hhmm(cur[1])}` + (next ? `  ·  danach: ${t(next)}` : '') : '';
+  epgline.textContent = cur ? `Jetzt · now: ${t(cur)} · bis ${hhmm(cur[1])}` : '';
   epgline.classList.toggle('d-none', !cur);
+  // details of the running programme under the player: image, year/genre/episode/rating, description
+  const m = cur ? cur[4] || {} : {}, pinfo = document.getElementById('pinfo'), pimg = document.getElementById('pimg');
+  pinfo.classList.toggle('d-none', !cur);
+  document.getElementById('ptitle').textContent = cur ? t(cur) + (m.s ? ' – ' + m.s : '') : '';
+  document.getElementById('pmeta').textContent = [m.y, m.g, m.e, m.r].filter(Boolean).join(' · ');
+  document.getElementById('pdesc').textContent = m.d || '';
+  pimg.classList.toggle('d-none', !m.i);
+  if (m.i) { pimg.src = m.i.replace(/^http:/, 'https:'); pimg.onerror = () => pimg.classList.add('d-none'); }
 }
 setInterval(showEpg, 60000);
 // closed captions (CEA-608 in the video): hls.js exposes them as text tracks
