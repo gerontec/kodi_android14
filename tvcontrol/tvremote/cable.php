@@ -44,8 +44,8 @@ if ($f === 'index.m3u8') {
     }
     flock($lock, LOCK_UN);
     touch("$dir/last");
-    // first segment: probe + tune + 4 s of video
-    for ($t = 0; $t < 250 && !is_file("$dir/index.m3u8"); $t++) usleep(100000);
+    // first segment: probe + tune + 2 s of video; give up after 11 s like the players
+    for ($t = 0; $t < 110 && !is_file("$dir/index.m3u8"); $t++) usleep(100000);
 }
 $p = "$dir/$f";
 if (!is_file($p)) { http_response_code(404); exit; }

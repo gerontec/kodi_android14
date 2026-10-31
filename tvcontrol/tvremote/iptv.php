@@ -155,7 +155,8 @@ document.querySelectorAll('.ch .tv').forEach(b => b.addEventListener('click', as
   b.disabled = false;
 }));
 // "Browser": play here (HLS via hls.js, Safari natively)
-let hls = null, playingId = '';
+let hls = null, playingId = '', startTimer = null;
+const START_TIMEOUT = 11000;     // no picture within 11 s -> give up instead of spinning
 const video = document.getElementById('v'), player = document.getElementById('player');
 const EPG = <?= json_encode($epg, JSON_UNESCAPED_UNICODE) ?>;
 const epgline = document.getElementById('epgline'), ccBtn = document.getElementById('cc');
@@ -182,6 +183,13 @@ document.querySelectorAll('.ch .web').forEach(b => b.addEventListener('click', (
   playingId = row.dataset.id; showEpg(); ccBtn.classList.add('d-none');
   player.classList.remove('d-none');
   if (hls) { hls.destroy(); hls = null; }
+  clearTimeout(startTimer);
+  startTimer = setTimeout(() => {
+    if (hls) { hls.destroy(); hls = null; }
+    video.removeAttribute('src'); video.load();
+    show('Kein Signal nach 11 s · no stream after 11 s: ' + name);
+  }, START_TIMEOUT);
+  video.addEventListener('playing', () => clearTimeout(startTimer), { once: true });
   if (window.Hls && Hls.isSupported()) {
     // long-haul relay: start 3 segments behind live and keep a big buffer so jitter does not cut the audio
     hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 10, maxBufferLength: 60, maxMaxBufferLength: 120 });

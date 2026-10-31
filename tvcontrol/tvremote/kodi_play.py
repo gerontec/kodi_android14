@@ -14,6 +14,7 @@ TV = "192.168.178.195:5555"
 KODI = "http://192.168.178.195:8080/jsonrpc"
 AUTH = "Basic " + base64.b64encode(b"kodi:654321").decode()
 LIST = "/var/lib/tvremote/iptv_{}.m3u"
+START_TIMEOUT = 11               # seconds until the stream has to play
 
 
 def rpc(method, params=None):
@@ -59,7 +60,18 @@ def main():
     r = rpc("Player.Open", {"item": {"file": url}})
     if r.get("result") != "OK":
         sys.exit(f"Kodi: {r}")
-    print(name)
+    # Player.Open returns at once; wait up to START_TIMEOUT for the picture, else stop and report
+    t0 = time.time()
+    while time.time() - t0 < START_TIMEOUT:
+        time.sleep(1)
+        for p in rpc("Player.GetActivePlayers").get("result", []):
+            t = rpc("Player.GetProperties", {"playerid": p["playerid"], "properties": ["time", "speed"]})
+            pt = t.get("result", {}).get("time", {})
+            if t.get("result", {}).get("speed") and (pt.get("seconds") or pt.get("minutes") or pt.get("hours")):
+                print(name)
+                return
+    rpc("Player.Stop", {"playerid": 1})
+    sys.exit(f"kein Signal nach {START_TIMEOUT} s · no stream after {START_TIMEOUT} s: {name}")
 
 
 if __name__ == "__main__":
