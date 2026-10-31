@@ -76,7 +76,7 @@ def main(*args):
             soon.setdefault(p.get("channel"), []).append([int(start.timestamp()), int(stop.timestamp()), title,
                                                           meta(p)])
     for v in soon.values():
-        v.sort()
+        v.sort(key=lambda p: (p[0], p[1]))
     json.dump(soon, open(out_json, "w", encoding="utf-8"), ensure_ascii=False)
     print(f"{len(channels)} channels, {len(progs)} programmes, guide for {len(soon)} channels")
 
