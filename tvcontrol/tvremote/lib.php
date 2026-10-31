@@ -2,6 +2,7 @@
 // Shared access control for the guest remotes (tv.heissa.de, de.heissa.de):
 // home LAN, home IPv6 prefix / public IPv4 (cron-refreshed), VPN; heissa proxy passes X-Forwarded-For.
 
+date_default_timezone_set('Europe/Berlin');   // EPG times on the pages in local time
 const DATA = '/var/lib/tvremote';
 const PROXY = '10.8.0.1';
 

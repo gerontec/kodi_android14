@@ -66,3 +66,15 @@ unicast only).
 SRF live streams need a token from `il.srgssr.ch`, which answers `GEOBLOCK` for every exit we have:
 ipgate1 direct (FR), Privado zrh-009 and zrh-010 (91.148.244.x, „virtual" Zurich), Privado AT. A real Swiss
 IP (small Swiss VPS or a device at a Swiss home as WireGuard peer) is needed.
+
+## Programme guide (EPG) with English titles
+
+- `epg_build.sh` (kellertreppe, cron 05:00): `epg_channels.py` maps every tvg-id of our lists to a guide site
+  (iptv-org `guides.json`, preferred sites first), the iptv-org EPG grabber (`/home/pi/epg`, `npm run grab`) fetches
+  2 days; a second pass uses the next site for channels the first one missed; `epg_merge.py` writes
+  `m3u/epg.xml.gz` (Kodi: iptvsimple `epgUrl`) and `/var/lib/tvremote/epg_now.json` (web pages: now/next).
+  First run: 220 channels, 12,291 programmes, now/next for 201 channels, ~4 min.
+- `epg_titles_translate.py` (dell, cron 05:20): Cyrillic titles → English with NLLB-200-600M on CPU, only titles not
+  in the cache; Russian genre prefixes (х/ф, т/с, м/ф, д/ф …) become Film/Series/Cartoon/Documentary, trailing
+  episode numbers stay untranslated. Result `/var/lib/tvremote/epg_titles_en.json`; pages show original + EN.
+- Browser player: „Jetzt / danach" overlay, CC button when the stream carries CEA-608 captions.

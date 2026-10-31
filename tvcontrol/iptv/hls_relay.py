@@ -25,7 +25,7 @@ EXITS = {}
 TOKEN = ""
 CHUNK = 64 * 1024
 SEGMENT_TTL, PLAYLIST_TTL = 60, 1          # seconds a fetched body is shared with other viewers
-CACHE_MAX = 400 * 1024 * 1024              # bytes kept in memory (LRU)
+CACHE_MAX = 150 * 1024 * 1024              # bytes kept in memory (LRU); heissa is short of RAM
 
 
 class SingleFlight:

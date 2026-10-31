@@ -15,8 +15,9 @@ foreach (@file(DATA . "/iptv_$cc.m3u", FILE_IGNORE_NEW_LINES) ?: [] as $line) {
     if (str_starts_with($line, '#EXTINF')) {
         $name = trim(substr($line, strrpos($line, ',') + 1));
         $group = preg_match('/group-title="([^"]*)"/', $line, $m) ? $m[1] : '';
+        $tvgid = preg_match('/tvg-id="([^"]*)"/', $line, $m) ? $m[1] : '';
     } elseif ($line !== '' && $line[0] !== '#' && $name !== null) {
-        $items[] = ['name' => $name, 'group' => $group, 'url' => $line];
+        $items[] = ['name' => $name, 'group' => $group, 'url' => $line, 'id' => $tvgid];
         $name = null;
     }
 }
@@ -42,7 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['i'])) {
 }
 
 $groups = [];
-foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url']];
+foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url'], $c['id']];
+// now/next from the daily EPG build (epg_merge.py): {tvg-id: [[start, stop, title], ...]}
+$epg_all = json_decode(@file_get_contents(DATA . '/epg_now.json') ?: '{}', true) ?: [];
+// English translations of Cyrillic titles (dell, NLLB, epg_titles_translate.py): {original: english}
+$tr = json_decode(@file_get_contents(DATA . '/epg_titles_en.json') ?: '{}', true) ?: [];
+$epg = [];
+foreach ($items as $c) {
+    if ($c['id'] === '' || !isset($epg_all[$c['id']])) continue;
+    $epg[$c['id']] = array_map(fn($p) => [$p[0], $p[1], $p[2], $tr[$p[2]] ?? ''], $epg_all[$c['id']]);
+}
+// [title, english or '', until]
+function now_prog(array $epg, string $id): ?array {
+    foreach ($epg[$id] ?? [] as [$a, $b, $t, $en]) if ($a <= time() && time() < $b) return [$t, $en, date('H:i', $b)];
+    return null;
+}
 ?>
 <!doctype html>
 <html lang="de" data-bs-theme="light">
@@ -75,16 +90,23 @@ foreach ($items as $i => $c) $groups[$c['group']][] = [$i, $c['name'], $c['url']
   <input type="search" id="q" class="form-control form-control-lg" placeholder="Suchen · search"
          autocomplete="off" enterkeyhint="search">
 </header>
-<div id="player" class="d-none bg-black"><video id="v" controls playsinline class="w-100" style="max-height:45vh"></video></div>
+<div id="player" class="d-none bg-black position-relative">
+  <video id="v" controls playsinline class="w-100" style="max-height:45vh"></video>
+  <div id="epgline" class="position-absolute top-0 start-0 m-2 px-2 py-1 rounded small text-white"
+       style="background:rgba(0,0,0,.55); pointer-events:none"></div>
+  <button id="cc" type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2 d-none">CC</button>
+</div>
 <main id="list" class="px-2 px-sm-3 pb-5">
 <?php foreach ($groups as $g => $list): ?>
   <section data-group="<?= htmlspecialchars($g) ?>">
   <h2 class="h6 text-uppercase text-body-secondary mt-3 mb-2 ms-1"><?= htmlspecialchars($g) ?></h2>
   <div class="list-group">
-  <?php foreach ($list as [$i, $n, $u]): ?>
-    <div class="ch list-group-item d-flex align-items-center gap-2" data-i="<?= $i ?>"
-      data-n="<?= htmlspecialchars(strtolower($n)) ?>">
-      <span class="name flex-grow-1"><?= htmlspecialchars($n) ?></span>
+  <?php foreach ($list as [$i, $n, $u, $id]): $now = now_prog($epg, $id); ?>
+    <div class="ch list-group-item d-flex align-items-center gap-2" data-i="<?= $i ?>" data-id="<?= htmlspecialchars($id) ?>"
+      data-n="<?= htmlspecialchars(strtolower($n . ' ' . ($now ? $now[0] . ' ' . $now[1] : ''))) ?>">
+      <span class="name flex-grow-1"><?= htmlspecialchars($n) ?>
+        <?php if ($now): ?><br><small class="now text-body-secondary">▸ <?= htmlspecialchars($now[0]) ?> · bis <?= $now[2] ?>
+          <?php if ($now[1] !== ''): ?><br><span class="fst-italic">EN: <?= htmlspecialchars($now[1]) ?></span><?php endif; ?></small><?php endif; ?></span>
       <?php if (preg_match('#^https?://#', $u)): ?>
         <button type="button" class="btn btn-sm btn-primary web" data-url="<?= htmlspecialchars($u) ?>">▶ Browser</button>
       <?php endif; ?>
@@ -129,14 +151,36 @@ document.querySelectorAll('.ch .tv').forEach(b => b.addEventListener('click', as
   b.disabled = false;
 }));
 // "Browser": play here (HLS via hls.js, Safari natively)
-let hls = null;
+let hls = null, playingId = '';
 const video = document.getElementById('v'), player = document.getElementById('player');
+const EPG = <?= json_encode($epg, JSON_UNESCAPED_UNICODE) ?>;
+const epgline = document.getElementById('epgline'), ccBtn = document.getElementById('cc');
+const hhmm = t => new Date(t * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+function showEpg() {
+  const list = EPG[playingId] || [], now = Date.now() / 1000;
+  const cur = list.find(p => p[0] <= now && now < p[1]), next = list.find(p => p[0] >= now);
+  const t = p => p[2] + (p[3] ? ` (EN: ${p[3]})` : '');
+  epgline.textContent = cur ? `Jetzt · now: ${t(cur)} · bis ${hhmm(cur[1])}` + (next ? `  ·  danach: ${t(next)}` : '') : '';
+  epgline.classList.toggle('d-none', !cur);
+}
+setInterval(showEpg, 60000);
+// closed captions (CEA-608 in the video): hls.js exposes them as text tracks
+function captionTracks() { return [...video.textTracks].filter(t => t.kind === 'captions' || t.kind === 'subtitles'); }
+video.textTracks.addEventListener('addtrack', () => ccBtn.classList.toggle('d-none', captionTracks().length === 0));
+ccBtn.addEventListener('click', () => {
+  const tr = captionTracks(); if (!tr.length) return;
+  const on = tr[0].mode !== 'showing';
+  tr.forEach((t, k) => t.mode = (on && k === 0) ? 'showing' : 'hidden');
+  ccBtn.classList.toggle('btn-light', on); ccBtn.classList.toggle('btn-dark', !on);
+});
 document.querySelectorAll('.ch .web').forEach(b => b.addEventListener('click', () => {
-  const url = b.dataset.url, name = b.closest('.ch').querySelector('.name').textContent;
+  const row = b.closest('.ch'), url = b.dataset.url, name = row.querySelector('.name').firstChild.textContent.trim();
+  playingId = row.dataset.id; showEpg(); ccBtn.classList.add('d-none');
   player.classList.remove('d-none');
   if (hls) { hls.destroy(); hls = null; }
   if (window.Hls && Hls.isSupported()) {
-    hls = new Hls({ maxBufferLength: 20 });
+    // long-haul relay: start 3 segments behind live and keep a big buffer so jitter does not cut the audio
+    hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 10, maxBufferLength: 60, maxMaxBufferLength: 120 });
     hls.on(Hls.Events.ERROR, (e, d) => { if (d.fatal) show('Stream-Fehler · stream error'); });
     hls.loadSource(url); hls.attachMedia(video);
   } else {
