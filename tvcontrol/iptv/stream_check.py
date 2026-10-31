@@ -34,7 +34,11 @@ def source_url(url):
 
 
 def probe(url):
-    cmd = ["ffmpeg", "-nostdin", "-loglevel", "error", "-rw_timeout", "20000000",
+    # RTSP (FRITZ!Box cable): UDP only (TCP -> 461), and the socket timeout option is -timeout;
+    # -rw_timeout is unknown for rtsp and made every cable channel look dead
+    opts = (["-rtsp_transport", "udp", "-timeout", "20000000"] if url.startswith("rtsp://")
+            else ["-rw_timeout", "20000000"])
+    cmd = ["ffmpeg", "-nostdin", "-loglevel", "error", *opts,
            "-i", url, "-t", str(LIMIT_S), "-map", "0:v?", "-map", "0:a?", "-c", "copy", "-f", "mpegts", "pipe:1"]
     got, start = 0, time.time()
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)

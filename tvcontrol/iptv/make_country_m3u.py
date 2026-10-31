@@ -44,12 +44,21 @@ FRITZBOX = {"tvhd": "Kabel HD", "tvsd": "Kabel SD", "radio": "Kabel Radio"}
 JUNK_NAME = re.compile(r"^\W*$|\b(QVC\w*|HSE\w*|Juwelo|1-2-3\.tv|Channel ?21|sonnenklar|Shop ?LC|Mediashop|"
                        r"Astro ?TV|Sex\w*|Erotik\w*|Babestation\w*|Teleshopping|Shopping)\b", re.I)
 JUNK_GROUP = re.compile(r"shop|adult|erotic|xxx", re.I)
+# religious channels (churches, bible, preachers) are not wanted in any guest list
+RELIGIOUS_NAME = re.compile(r"\b(Bibel\w*|Bible\w*|Biblia|Kirche\w*|Church\w*|Gospel|Hope ?TV|Horeb|Radio Maria|RADIO MARIA|"
+                            r"EWTN|K-TV|God ?TV|Gott\w*|Christ(?!mas)\w*|Jesus|Glaube\w*|Catholic|Katholisch\w*|Evangel\w*|"
+                            r"Daystar|TBN|Trinity|Angel ?TV|Spirit ?TV|SonLife|Neue Zeit|Immaculata|Dieu|Adventist\w*|"
+                            r"Faith|Pray\w*|Tabernacle|Shalom|Worship|Messiah|Apostol\w*|Vatican\w*|Telepace|Padre Pio|"
+                            r"Lourdes|Madonna|Islam\w*|Quran|Koran|Sunnah|Torah|Hindu\w*|Bhakti|Aastha|Sanskar)\b", re.I)
+RELIGIOUS_GROUP = re.compile(r"relig", re.I)
+
 
 
 def junk(info):
     name = info.rpartition(",")[2].strip()
     group = re.search(r'group-title="([^"]*)"', info)
-    return bool(JUNK_NAME.search(name) or (group and JUNK_GROUP.search(group.group(1))))
+    return bool(JUNK_NAME.search(name) or RELIGIOUS_NAME.search(name)
+                or (group and (JUNK_GROUP.search(group.group(1)) or RELIGIOUS_GROUP.search(group.group(1)))))
 
 
 def plain(name):
@@ -74,7 +83,8 @@ def fritzbox(base):
             elif line.startswith("rtsp://") and info:
                 name = info.rpartition(",")[2].strip()
                 # public broadcasters switched SD off; the box still lists "ZDF SD" etc. from its last scan
-                if not (lst == "tvsd" and name.endswith(" SD")) and not JUNK_NAME.search(name):
+                if not (lst == "tvsd" and name.endswith(" SD")) and not JUNK_NAME.search(name) \
+                        and not RELIGIOUS_NAME.search(name):
                     radio = ' radio="true"' if lst == "radio" else ""   # iptvsimple: radio section
                     out.append((f'#EXTINF:-1{radio} group-title="{group}",{name}', line.strip()))
                 info = None
