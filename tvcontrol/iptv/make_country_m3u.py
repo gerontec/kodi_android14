@@ -179,7 +179,9 @@ def main():
                 write(f, cable, sort=False)     # FRITZ!Box order = cable programme order
             write(f, lists[cc])
     with open(os.path.join(a.out, "de", "all.m3u"), "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n")
+        # Kodi iptvsimple takes the guide from the playlist header (epg_build.sh writes m3u/epg.xml.gz)
+        epg = "http://192.168.178.218:8090/m3u/epg.xml.gz"
+        f.write(f'#EXTM3U url-tvg="{epg}" x-tvg-url="{epg}"\n')
         write(f, cable, sort=False)
         for cc in LISTS:
             write(f, lists[cc])
